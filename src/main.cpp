@@ -2,8 +2,7 @@
 #include <iostream>
 #include "InputStream1.hpp"
 #include "OutputStream1.hpp"
-
-
+#include "OutputStream3.hpp"
 
 void noop();
 
@@ -28,6 +27,15 @@ int main(int argc, char* argv[]) {
       InputStream1 is = InputStream1();
       is.open_file(argv[2]);
       is.read_all();
+  }
+
+  if (strcmp(argv[1], "buffered") == 0) {
+    BufferedInputstream<8> bis = BufferedInputstream<8>();
+    bis.open_file("random.16");
+    for (int i = 0; i < 4; ++i) {
+      std::cout << bis.read_next() << std::endl;
+    }
+    std::cout << bis.end_of_stream() << std::endl;
   }
 }
 

@@ -24,4 +24,7 @@ random: random.4 random.16 random.256 random.65536
 test: streams
 	./streams nothing
 
+test3: streams
+	./streams buffered
+
 .PHONY: random test
