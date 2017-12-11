@@ -1,3 +1,6 @@
+#ifndef DEF_INPUTSTREAM1
+#define DEF_INPUTSTREAM1
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -7,11 +10,9 @@
 
 #include "streams.hpp"
 
-#ifndef DEF_INPUTSTREAM1
-#define DEF_INPUTSTREAM1
 using namespace std;
 
-class InputStream1: virtual public AbstractInputstream{
+class InputStream1: virtual public AbstractInputstream {
 private:
     signed char buffer[4];
     int fd;
@@ -19,13 +20,11 @@ private:
 
 public:
     InputStream1():fd(0), end(1){}
-    void open_file(const char*);
-    void read_next();
-    bool end_of_stream();
+    virtual void open_file(const char* const) override;
+    virtual int_least32_t read_next() override;
+    virtual bool end_of_stream() override;
+
     void read_all();
-    int_least32_t charsToInt32(signed char*);
-
-
 };
 
 
@@ -35,11 +34,12 @@ void InputStream1::open_file(const char* filename) {
 }
 
 
-void InputStream1::read_next(){
+int_least32_t InputStream1::read_next(){
     end = read(fd, buffer, sizeof(buffer));
     if (!end_of_stream()){
-        cout << charsToInt32(buffer) << endl;
+        return charsToInt32(buffer);
     }
+    return 0; // TODO
 }
 
 bool InputStream1::end_of_stream(){
@@ -52,12 +52,6 @@ void InputStream1::read_all(){
     }
 }
 
-
-int_least32_t InputStream1::charsToInt32 (signed char* chars) {
-    return (static_cast<int_least32_t>(chars[0]) << 24)
-         | (static_cast<int_least32_t>(chars[1]) << 16)
-         | (static_cast<int_least32_t>(chars[2]) << 8)
-         | (static_cast<int_least32_t>(chars[3]));
-}
-
 #endif
+
+// vim: set shiftwidth=4:
