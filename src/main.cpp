@@ -3,6 +3,8 @@
 #include "memoryMapping.hpp"
 #include "InputStream1.hpp"
 #include "OutputStream1.hpp"
+#include "InputStream2.hpp"
+#include "OutputStream2.hpp"
 #include "InputStream3.hpp"
 
 void noop();
@@ -24,6 +26,15 @@ int main(int argc, char* argv[]) {
         //      os.write_file(34652);
         os.close_file();
         InputStream1 is = InputStream1();
+        is.open_file(argv[2]);
+        is.read_all();
+    }
+    else if (strcmp(argv[1], "2") == 0) {
+        OutputStream1 os = OutputStream1();
+        os.create(argv[2]);
+        os.write_file(111);
+        os.write_file(-45);       
+        InputStream2 is = InputStream2();
         is.open_file(argv[2]);
         is.read_all();
     }

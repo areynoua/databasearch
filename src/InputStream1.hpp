@@ -1,8 +1,6 @@
 #ifndef DEF_INPUTSTREAM1
 #define DEF_INPUTSTREAM1
 
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <iostream>
 #include <fcntl.h>
@@ -15,7 +13,6 @@ using namespace std;
 
 class InputStream1: virtual public AbstractInputstream {
 private:
-    signed char buffer[4];
     int fd;
     size_t end;
 
@@ -36,6 +33,7 @@ void InputStream1::open_file(const char* filename) {
 
 
 int_least32_t InputStream1::read_next(){
+    signed char buffer[4];
     end = read(fd, buffer, sizeof(buffer));
     if (!end_of_stream()){
         return charsToInt32(buffer);

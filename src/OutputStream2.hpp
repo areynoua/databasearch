@@ -1,42 +1,40 @@
 #include <unistd.h>
 #include <iostream>
-#include <fcntl.h>
 
 #include "streams.hpp"
 
-#ifndef DEF_OUTPUTSTREAM1
-#define DEF_OUTPUTSTREAM1
+#ifndef DEF_OUTPUTSTREAM2
+#define DEF_OUTPUTSTREAM2
 using namespace std;
 
-class OutputStream1: virtual public AbstractOutputstream{
+class OutputStream2: virtual public AbstractOutputstream{
 private:
-    int fd;
+    FILE *file_pointer;
 public:
-    OutputStream1(): fd(0){}
+    OutputStream2(): file_pointer(nullptr){}
     void create(const char*);
     void write_file(int);
     void close_file();
 };
 
 
-void OutputStream1::create(const char* filename){
-    fd = open(filename, O_RDWR|O_CREAT, 0666);
+void OutputStream2::create(const char* filename){
+    file_pointer = fopen(filename,"w");
 }
 
 
-void OutputStream1::write_file(int number){
+void OutputStream2::write_file(int number){
     signed char buffer[4];
     buffer[0] = static_cast<signed char>((number >> 24) & 0xFF);
     buffer[1] = static_cast<signed char>((number >> 16) & 0xFF);
     buffer[2] = static_cast<signed char>((number >> 8) & 0xFF);
     buffer[3] = static_cast<signed char>(number & 0xFF);
 
-    write(fd, buffer, sizeof(buffer));
-    read(fd, buffer, sizeof(buffer));
+    fwrite(buffer, sizeof(buffer),1,file_pointer);
 }
 
-void OutputStream1::close_file(){
-    close(fd);
+void OutputStream2::close_file(){
+    fclose(file_pointer);
 }
 
 
