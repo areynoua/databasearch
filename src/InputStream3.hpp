@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-#include "streams.hpp"
+#include "common.hpp"
 
 // using int32_filebuf = std::basic_filebuf<std::int_least32_t, std::char_traits<char32_t>>;
 using string=std::string;
@@ -23,7 +23,7 @@ class BufferedInputstream : virtual public AbstractInputstream {
     bool _eof = false;
 public:
     BufferedInputstream();
-    void open_file(const char*);
+    void open(const char*);
     int_least32_t read_next();
     bool end_of_stream();
 private:
@@ -37,8 +37,8 @@ BufferedInputstream<_bufferSize>::BufferedInputstream() {
 }
 
 template <size_t _bufferSize>
-void BufferedInputstream<_bufferSize>::open_file(const char *pathname) {
-    _fd = open(pathname, O_RDONLY | O_LARGEFILE);
+void BufferedInputstream<_bufferSize>::open(const char *pathname) {
+    _fd = ::open(pathname, O_RDONLY | O_LARGEFILE);
     // TODO: throw error if fd < 0
     std::cout << pathname << std::endl;
 }

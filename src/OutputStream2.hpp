@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <iostream>
 
-#include "streams.hpp"
+#include "common.hpp"
 
 #ifndef DEF_OUTPUTSTREAM2
 #define DEF_OUTPUTSTREAM2
@@ -14,7 +14,7 @@ public:
     OutputStream2(): file_pointer(nullptr){}
     void create(const char*);
     void write_file(int);
-    void close_file();
+    void close();
 };
 
 
@@ -33,7 +33,7 @@ void OutputStream2::write_file(int number){
     fwrite(buffer, sizeof(buffer),1,file_pointer);
 }
 
-void OutputStream2::close_file(){
+void OutputStream2::close(){
     fclose(file_pointer);
 }
 

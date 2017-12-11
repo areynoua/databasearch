@@ -20,27 +20,29 @@ int main(int argc, char* argv[]) {
     else if (strcmp(argv[1], "1") == 0) {
         OutputStream1 os = OutputStream1();
         os.create(argv[2]);
-        os.write_file(111);
-        //      os.write_file(-2);
-        //      os.write_file(3);
-        //      os.write_file(34652);
-        os.close_file();
+        os.write_file(111); // FIXME: write_file behave well only when no implicit conversion occurs on the method paramter
+        os.write_file(-2);
+        os.write_file(3);
+        os.write_file(-30884);
+        os.close();
+
+        std::cout << "expected: 111 -2 3 -30884" << std::endl;
         InputStream1 is = InputStream1();
-        is.open_file(argv[2]);
-        is.read_all();
+        is.open(argv[2]);
+        print_all(is);
     }
     else if (strcmp(argv[1], "2") == 0) {
         OutputStream1 os = OutputStream1();
         os.create(argv[2]);
         os.write_file(111);
-        os.write_file(-45);       
+        os.write_file(-45);
         InputStream2 is = InputStream2();
-        is.open_file(argv[2]);
+        is.open(argv[2]);
         is.read_all();
     }
     else if (strcmp(argv[1], "buffered") == 0) {
         BufferedInputstream<2> bis = BufferedInputstream<2>();
-        bis.open_file("random.16");
+        bis.open("random.16");
         for (int i = 0; i < 4; ++i) {
             std::cout << bis.read_next() << std::endl;
         }

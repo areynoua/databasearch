@@ -1,3 +1,5 @@
 Random generation: see man 4 random
 
+Open files with/without the O_DIRECT (see open(2))
+
 vim: set spell spelllang=en:

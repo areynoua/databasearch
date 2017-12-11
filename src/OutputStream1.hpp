@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fcntl.h>
 
-#include "streams.hpp"
+#include "common.hpp"
 
 #ifndef DEF_OUTPUTSTREAM1
 #define DEF_OUTPUTSTREAM1
@@ -15,12 +15,12 @@ public:
     OutputStream1(): fd(0){}
     void create(const char*);
     void write_file(int);
-    void close_file();
+    void close();
 };
 
 
 void OutputStream1::create(const char* filename){
-    fd = open(filename, O_RDWR|O_CREAT, 0666);
+    fd = ::open(filename, O_RDWR|O_CREAT, 0666);
 }
 
 
@@ -35,8 +35,8 @@ void OutputStream1::write_file(int number){
     read(fd, buffer, sizeof(buffer));
 }
 
-void OutputStream1::close_file(){
-    close(fd);
+void OutputStream1::close(){
+    ::close(fd);
 }
 
 

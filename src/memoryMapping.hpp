@@ -17,9 +17,9 @@ class MemoryMapping{
 public:
     MemoryMapping(char* fname) : filename(fname){}
 
-    int open_file(){
+    int open(){
         int fd;
-        fd = open(filename, O_RDONLY);
+        fd = ::open(filename, O_RDONLY);
         if (fd == -1) {
             perror("Error opening file for reading");
             exit(EXIT_FAILURE);
@@ -31,7 +31,7 @@ public:
         char *map;
         map = (char *)mmap(0, FILE_LENGTH, PROT_READ, MAP_SHARED, fd, 0);
         if (map == MAP_FAILED) {
-        	close(fd);
+        	::close(fd);
         	perror("Error mmapping the file");
         	exit(EXIT_FAILURE);
         }
@@ -60,15 +60,15 @@ public:
         int fd;
         char *map;  /* mmapped array of int's */
         // Open the file.
-        fd = open_file();
+        fd = open();
         // Read the information.
         map = read_next(fd);
         // print for testing.
         printMapElements(map);
         // Unmap
         unmap(map);
-        // Close because unmap doesn't close it.
-        close(fd);
+        // Close because unmap doesn't ::close it.
+        ::close(fd);
 
         return map;
     }
@@ -88,7 +88,7 @@ public:
          *  - Creating the file if it doesn't exist.
          *  - Truncating it to 0 size if it already exists. (not really needed)
          */
-        fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+        fd = ::open(filename, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
         if (fd == -1) {
         	perror("Error opening file for writing");
         	exit(EXIT_FAILURE);
@@ -98,7 +98,7 @@ public:
          */
         result = lseek(fd, FILE_LENGTH-1, SEEK_SET);
         if (result == -1) {
-        	close(fd);
+        	::close(fd);
         	perror("Error calling lseek() to 'stretch' the file");
         	exit(EXIT_FAILURE);
         }
@@ -109,14 +109,14 @@ public:
          */
         result = write(fd, "", 1);
         if (result != 1) {
-        	close(fd);
+        	::close(fd);
         	perror("Error writing last byte of the file");
         	exit(EXIT_FAILURE);
         }
 
         map = (char *)mmap(0, FILE_LENGTH, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
         if (map == MAP_FAILED) {
-        	close(fd);
+        	::close(fd);
         	perror("Error mmapping the file");
         	exit(EXIT_FAILURE);
         }
@@ -132,12 +132,12 @@ public:
          */
          if (munmap(map, FILE_LENGTH) == -1) {
         	perror("Error un-mmapping the file");
-        	/* Decide here whether to close(fd) and exit() or not. Depends... */
+        	/* Decide here whether to ::close(fd) and exit() or not. Depends... */
         }
 
-        /* Un-mmaping doesn't close the file, so we still need to close it.
+        /* Un-mmaping doesn't ::close the file, so we still need to ::close it.
          */
-        close(fd);
+        ::close(fd);
         return map;
     }
 };

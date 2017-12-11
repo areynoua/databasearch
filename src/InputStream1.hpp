@@ -1,59 +1,65 @@
 #ifndef DEF_INPUTSTREAM1
 #define DEF_INPUTSTREAM1
 
-#include <unistd.h>
-#include <iostream>
-#include <fcntl.h>
 #include <cstdint>
-#include "InputStream3.hpp"
+#include <error.h>
+#include <fcntl.h>
+#include <unistd.h>
 
-#include "streams.hpp"
+#include "common.hpp"
 
 using namespace std;
 
-class InputStream1: virtual public AbstractInputstream {
-private:
+class InputStream1 final : virtual public AbstractInputstream {
+    static const size_t SIZE = 32 / 8; // 32 bits
     int fd;
-    size_t end;
+    char buffer[SIZE];
+    ssize_t read_size;
 
 public:
-    InputStream1():fd(0), end(1){}
-    virtual void open_file(const char* const) override;
-    virtual int_least32_t read_next() override;
-    virtual bool end_of_stream() override;
-
-    void read_all();
+    InputStream1(): fd(-1), read_size(0) {}
+    void open(const char* const) override;
+    int_least32_t read_next() override;
+    inline bool end_of_stream() override;
 };
 
 
-void InputStream1::open_file(const char* filename) {
-    fd = open(filename,O_RDONLY);
-    cout << read_next() << endl;
-}
-
-
-int_least32_t InputStream1::read_next(){
-    signed char buffer[4];
-    end = read(fd, buffer, sizeof(buffer));
-    if (!end_of_stream()){
-        return charsToInt32(buffer);
+void InputStream1::open(const char* filename) {
+    fd = ::open(filename, O_RDONLY | O_LARGEFILE);
+    if (fd == -1) {
+        throw FileOpenException(errno);
     }
-    return NULL; // TODO
+    read_next(); // fill the buffer
 }
 
-bool InputStream1::end_of_stream(){
-    return end == 0;
-}
+int_least32_t InputStream1::read_next() {
+    /* Return the value in the buffer when the function is called
+     * and fill the buffer for the next value.
+     * This allow to handle end_of_stream conveniently. */
 
-void InputStream1::read_all(){
-    while (end != 0){
-        int_least32_t value = read_next();
-        if (value != NULL){
-            cout << value <<endl;;
+    int_least32_t value(0);
+
+    if (read_size == SIZE) {
+        value = charsToInt32(buffer);
+    }
+    else {
+        if (read_size > 0) {
+            error(0, 0, "Last %ld bytes ignored (4 bytes expected)", read_size);
+        }
+        else if (read_size < 0) {
+            throw FileReadException(errno);
         }
     }
+
+    read_size = read(fd, buffer, SIZE);
+
+    return value;
+}
+
+bool InputStream1::end_of_stream() {
+    return read_size == 0;
 }
 
 #endif
 
-// vim: set shiftwidth=4:
+// vim: set shiftwidth=4 softtabstop=4 spell spelllang=en:
