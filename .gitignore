@@ -1,3 +1,11 @@
+# Random files
+random.*
+
+# Bacckup files
+*~
+*.default
+*.bak
+
 # Prerequisites
 *.d
 
