@@ -23,15 +23,16 @@ public:
 
 void OutputStream1::create(const char* filename){
     fd = open(filename, O_RDWR|O_CREAT, 0666);
+    cout << fd << endl;
 }
 
 
 void OutputStream1::write_file(int number){
-    unsigned char buffer[4];
-    buffer[0] = static_cast<unsigned char>((number >> 24) & 0xFF);
-    buffer[1] = static_cast<unsigned char>((number >> 16) & 0xFF);
-    buffer[2] = static_cast<unsigned char>((number >> 8) & 0xFF);
-    buffer[3] = static_cast<unsigned char>(number & 0xFF);
+    signed char buffer[4];
+    buffer[0] = static_cast<signed char>((number >> 24) & 0xFF);
+    buffer[1] = static_cast<signed char>((number >> 16) & 0xFF);
+    buffer[2] = static_cast<signed char>((number >> 8) & 0xFF);
+    buffer[3] = static_cast<signed char>(number & 0xFF);
 
     write(fd, buffer, sizeof(buffer));
     read(fd, buffer, sizeof(buffer));

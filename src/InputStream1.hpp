@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <fcntl.h>
+#include <cstdint>
 
 #include "streams.hpp"
 
@@ -12,7 +13,7 @@ using namespace std;
 
 class InputStream1: virtual public AbstractInputstream{
 private:
-    unsigned char buffer[4];
+    signed char buffer[4];
     int fd;
     size_t end;
 
@@ -22,6 +23,7 @@ public:
     void read_next();
     bool end_of_stream();
     void read_all();
+    int_least32_t charsToInt32(signed char*);
 
 
 };
@@ -36,10 +38,7 @@ void InputStream1::open_file(const char* filename) {
 void InputStream1::read_next(){
     end = read(fd, buffer, sizeof(buffer));
     if (!end_of_stream()){
-        for (size_t i = 0; i < sizeof(buffer); ++i){
-            cout << int(buffer[i]);
-        }
-        cout << endl;
+        cout << charsToInt32(buffer) << endl;
     }
 }
 
@@ -51,6 +50,14 @@ void InputStream1::read_all(){
     while (end != 0){
         read_next();
     }
+}
+
+
+int_least32_t InputStream1::charsToInt32 (signed char* chars) {
+    return (static_cast<int_least32_t>(chars[0]) << 24)
+         | (static_cast<int_least32_t>(chars[1]) << 16)
+         | (static_cast<int_least32_t>(chars[2]) << 8)
+         | (static_cast<int_least32_t>(chars[3]));
 }
 
 #endif
