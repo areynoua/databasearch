@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fcntl.h>
 #include <cstdint>
+#include "InputStream3.hpp"
 
 #include "streams.hpp"
 
@@ -30,7 +31,7 @@ public:
 
 void InputStream1::open_file(const char* filename) {
     fd = open(filename,O_RDONLY);
-    read_next();
+    cout << read_next() << endl;
 }
 
 
@@ -39,7 +40,7 @@ int_least32_t InputStream1::read_next(){
     if (!end_of_stream()){
         return charsToInt32(buffer);
     }
-    return 0; // TODO
+    return NULL; // TODO
 }
 
 bool InputStream1::end_of_stream(){
@@ -48,7 +49,10 @@ bool InputStream1::end_of_stream(){
 
 void InputStream1::read_all(){
     while (end != 0){
-        read_next();
+        int_least32_t value = read_next();
+        if (value != NULL){
+            cout << value <<endl;;
+        }
     }
 }
 

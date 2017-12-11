@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     else if (strcmp(argv[1], "1") == 0) {
         OutputStream1 os = OutputStream1();
         os.create(argv[2]);
-        os.write_file(-235);
+        os.write_file(111);
         //      os.write_file(-2);
         //      os.write_file(3);
         //      os.write_file(34652);

@@ -23,7 +23,6 @@ public:
 
 void OutputStream1::create(const char* filename){
     fd = open(filename, O_RDWR|O_CREAT, 0666);
-    cout << fd << endl;
 }
 
 
