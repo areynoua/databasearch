@@ -3,7 +3,7 @@
 #include "memoryMapping.hpp"
 #include "InputStream1.hpp"
 #include "OutputStream1.hpp"
-#include "OutputStream3.hpp"
+#include "InputStream3.hpp"
 
 void noop();
 
@@ -16,15 +16,15 @@ int main(int argc, char* argv[]) {
     std::cout << "OK. Nothing done." << std::endl;
   }
 
-  ////////////////////////////////////////////////////////
-  // TESTING MEMORY_MAPPING, IMPLEMENTATION 4
-  char *data;
-  char* filename = argv[1];
-  //MemoryMapping mmap = MemoryMapping(filename, 16);
-  MemoryMapping mmap = MemoryMapping(filename);
-  //data = mmap.writeFile();
-  data = mmap.readFile();
-  ////////////////////////////////////////////////////////
+//  ////////////////////////////////////////////////////////
+//  // TESTING MEMORY_MAPPING, IMPLEMENTATION 4
+//  char *data;
+//  char* filename = argv[1];
+//  //MemoryMapping mmap = MemoryMapping(filename, 16);
+//  MemoryMapping mmap = MemoryMapping(filename);
+//  //data = mmap.writeFile();
+//  data = mmap.readFile();
+//  ////////////////////////////////////////////////////////
 
   if (strcmp(argv[1], "1") == 0){
       OutputStream1 os = OutputStream1();
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
   }
 
   if (strcmp(argv[1], "buffered") == 0) {
-    BufferedInputstream<8> bis = BufferedInputstream<8>();
+    BufferedInputstream<2> bis = BufferedInputstream<2>();
     bis.open_file("random.16");
     for (int i = 0; i < 4; ++i) {
       std::cout << bis.read_next() << std::endl;

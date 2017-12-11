@@ -7,7 +7,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-
 #include <iostream>
 
 #include "streams.hpp"
@@ -16,8 +15,8 @@
 using string=std::string;
 
 template <size_t _bufferSize>
-class BufferedInputstream  {
-    char _buffer[_bufferSize];
+class BufferedInputstream : virtual public AbstractInputstream {
+    char _buffer[_bufferSize*4];
     int _fd = -1;
     size_t _next = 0;
     size_t _max = 0;
@@ -47,7 +46,7 @@ void BufferedInputstream<_bufferSize>::open_file(const char *pathname) {
 template <size_t _bufferSize>
 int_least32_t BufferedInputstream<_bufferSize>::read_next() {
     if (_next == _max) {
-        _max = read(_fd, _buffer, _bufferSize);
+        _max = read(_fd, _buffer, _bufferSize*4);
         std::cout << _max << " bytes read from file" << std::endl;
         if (_max == 0) {
             _eof = true;
@@ -64,6 +63,7 @@ int_least32_t BufferedInputstream<_bufferSize>::read_next() {
 
 template <size_t _bufferSize>
 bool BufferedInputstream<_bufferSize>::end_of_stream() {
+    // FIXME
     return _eof;
 }
 
