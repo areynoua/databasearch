@@ -1,8 +1,8 @@
 DEPS = $(wildcard *.hpp)
-FLAGS = "-ggdb3 -Wpedantic -Wall -Wextra -Wconversion -Weffc++ -Wstrict-null-sentinel -Wold-style-cast -Wnoexcept -Wctor-dtor-privacy -Woverloaded-virtual -Wsign-promo -Wzero-as-null-pointer-constant"
+FLAGS = -ggdb3 -Wpedantic -Wall -Wextra -Wconversion -Weffc++ -Wstrict-null-sentinel -Wold-style-cast -Wnoexcept -Wctor-dtor-privacy -Woverloaded-virtual -Wsign-promo -Wzero-as-null-pointer-constant
 
 streams: main.cpp ${DEPS}
-	g++ -std=c++11 -o $@ $^ -ggdb3 
+	g++ -std=c++11 -o $@ $^ ${FLAGS}
 
 random.4:
 	head --bytes=4 /dev/urandom > random.4
