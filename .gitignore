@@ -1,7 +1,10 @@
+# Binaries
+src/streams
+
 # Random files
 random.*
 
-# Bacckup files
+# Backup files
 *~
 *.default
 *.bak
