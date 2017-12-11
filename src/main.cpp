@@ -1,5 +1,8 @@
 #include <cstring> // strcmp
 #include <iostream>
+#include "impl1.hpp"
+
+
 
 void noop();
 
@@ -12,10 +15,12 @@ int main(int argc, char* argv[]) {
     noop();
     std::cout << "OK. Nothing done." << std::endl;
   }
+
+  if (strcmp(argv[1], "1") == 0){
+      readFile();
+  }
 }
 
 void noop() {
   // no operation
 }
-
-
