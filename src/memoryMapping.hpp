@@ -8,7 +8,7 @@
 #include <time.h>
 #include <cstdint>  // int_least32_t
 
-#define NUMINTS (4)
+#define NUMINTS (16)
 #define FILE_LENGTH (NUMINTS * 1)
 
 class MemoryMapping{
@@ -17,41 +17,67 @@ class MemoryMapping{
 public:
     MemoryMapping(char* fname) : filename(fname){}
 
-    char *readFile(){
-        int i;
+    int open_file(){
         int fd;
-        char *map;  /* mmapped array of int's */
-
         fd = open(filename, O_RDONLY);
         if (fd == -1) {
             perror("Error opening file for reading");
             exit(EXIT_FAILURE);
         }
+        return fd;
+    }
+
+    char *read_next(int fd){
+        char *map;
         map = (char *)mmap(0, FILE_LENGTH, PROT_READ, MAP_SHARED, fd, 0);
         if (map == MAP_FAILED) {
         	close(fd);
         	perror("Error mmapping the file");
         	exit(EXIT_FAILURE);
         }
+        return map;
+    }
 
-        /* Read the file int-by-int from the mmap
-         */
-        for (i = 0; i <NUMINTS; ++i) {
-            std::cout << i << ":" << map[i] << "  ";
-        }
-        std::cout << std::endl;
+    // TODO MISSING ENDOFSTREAM
+
+    void unmap(char *map){
         if (munmap(map, FILE_LENGTH) == -1) {
             perror("Error un-mmapping the file");
         }
+    }
 
+    void printMapElements(char *map){
+        /* Read the file int-by-int from the map
+         */
+        for (int i = 0; i <NUMINTS; ++i) {
+            std::cout << i << ":" << map[i] << "  ";
+        }
+        std::cout << std::endl;
+    }
+
+    char *read_file(){
+        int i;
+        int fd;
+        char *map;  /* mmapped array of int's */
+        // Open the file.
+        fd = open_file();
+        // Read the information.
+        map = read_next(fd);
+        // print for testing.
+        printMapElements(map);
+        // Unmap
+        unmap(map);
+        // Close because unmap doesn't close it.
         close(fd);
+
         return map;
     }
 
     // TODO
     // TODO WE MAY CHANGE THE SIGNATURE TO GIVE HIM DIRECTLY A LIST OF int_least32_t
     // TODO
-    char *writeFile(){
+
+    char *write_file(){
         //srand(time(NULL));
         int i;
         int fd;

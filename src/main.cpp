@@ -3,7 +3,7 @@
 #include "memoryMapping.hpp"
 #include "InputStream1.hpp"
 #include "OutputStream1.hpp"
-#include "OutputStream3.hpp"
+#include "InputStream3.hpp"
 
 void noop();
 
@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
   //MemoryMapping mmap = MemoryMapping(filename, 16);
   MemoryMapping mmap = MemoryMapping(filename);
   //data = mmap.writeFile();
-  data = mmap.readFile();
+  data = mmap.read_file();
   ////////////////////////////////////////////////////////
 
   if (strcmp(argv[1], "1") == 0){
