@@ -6,8 +6,8 @@
 
 #include "streams.hpp"
 
-#ifndef DEF_IMPL1
-#define DEF_IMPL1
+#ifndef DEF_INPUTSTREAM1
+#define DEF_INPUTSTREAM1
 using namespace std;
 
 class InputStream1: virtual public AbstractInputstream{

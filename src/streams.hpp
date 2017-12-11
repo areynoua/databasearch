@@ -12,11 +12,11 @@ public:
   bool end_of_stream();
 };
 
-class AbstractIutputstream {
+class AbstractOutputstream {
 public:
   void create(string outfilename);
-  void write (int_least32_t elem);
-  void close();
+  void write_file (int_least32_t elem);
+  void close_file();
 };
 
 #endif //__STREAMS_HPP__
