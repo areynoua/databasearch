@@ -7,7 +7,7 @@ using string = std::string;
 
 class AbstractInputstream {
 public:
-  void open(string infilename);
+  void open_file(string infilename);
   int_least32_t read_next();
   bool end_of_stream();
 };

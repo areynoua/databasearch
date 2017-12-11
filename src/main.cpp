@@ -17,7 +17,9 @@ int main(int argc, char* argv[]) {
   }
 
   if (strcmp(argv[1], "1") == 0){
-      readFile();
+      InputStream1 is = InputStream1();
+      is.open_file(argv[2]);
+      is.read_all();
   }
 }
 

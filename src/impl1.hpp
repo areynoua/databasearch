@@ -3,35 +3,54 @@
 #include <unistd.h>
 #include <iostream>
 #include <fcntl.h>
-using namespace std;
 
+#include "streams.hpp"
 
 #ifndef DEF_IMPL1
 #define DEF_IMPL1
+using namespace std;
+
+class InputStream1: virtual public AbstractInputstream{
+private:
+    unsigned char buffer[4];
+    int fd;
+    size_t end;
+
+public:
+    InputStream1():fd(0), end(1){}
+    void open_file(const char*);
+    void read_next();
+    bool end_of_stream();
+    void read_all();
 
 
-long getFileSize(int fd){
-    struct stat stat_buffer;
-    int rc = fstat(fd,&stat_buffer);
-    return rc == 0 ? stat_buffer.st_size : -1;
+};
+
+
+void InputStream1::open_file(const char* filename) {
+    fd = open(filename,O_RDONLY);
+    read_next();
 }
 
-void readFile() {
-    int fd = open("random.65536",O_RDONLY);
-    long filesize = getFileSize(fd);
-    unsigned char buffer[filesize];
-    read(fd, buffer, sizeof(buffer));
-    for (int i = 0; i < sizeof(buffer); ++i){
-        cout << int(buffer[i]);
+
+void InputStream1::read_next(){
+    end = read(fd, buffer, sizeof(buffer));
+    if (!end_of_stream()){
+        for (size_t i = 0; i < sizeof(buffer); ++i){
+            cout << int(buffer[i]);
+        }
+        cout << endl;
     }
-    cout << endl;
 }
 
-
-void writeFile(int number){
-
-    
+bool InputStream1::end_of_stream(){
+    return end == 0;
 }
 
+void InputStream1::read_all(){
+    while (end != 0){
+        read_next();
+    }
+}
 
 #endif
