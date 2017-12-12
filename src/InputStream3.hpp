@@ -77,4 +77,4 @@ int_least32_t BufferedInputstream<_bufferSize>::charsToInt32 (char* chars) {
 
 #endif // __IMPL3_H__
 
-// vim: set shiftwidth=4:
+// vim: set shiftwidth=4 softtabstop=4 spell spelllang=en:

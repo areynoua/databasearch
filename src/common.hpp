@@ -66,4 +66,4 @@ void print_all(AbstractInputstream& is) {
 
 #endif //__COMMON_HPP__
 
-// vim: set shiftwidth=4 softtabstop=4:
+// vim: set shiftwidth=4 softtabstop=4 spell spelllang=en:

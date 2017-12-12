@@ -65,4 +65,4 @@ void noop() {
     // no operation
 }
 
-// vim: set shiftwidth=4:
+// vim: set shiftwidth=4 softtabstop=4 spell spelllang=en:

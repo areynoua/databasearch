@@ -41,3 +41,4 @@ void OutputStream1::close(){
 
 
 #endif
+// vim: set shiftwidth=4 softtabstop=4 spell spelllang=en:
