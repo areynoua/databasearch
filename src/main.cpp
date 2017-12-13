@@ -46,7 +46,7 @@ void testStreams(AbstractOutputstream & os, AbstractInputstream & is, const char
 
     os.create(out_filename);
     for (size_t i = 0; i < DATA_SIZE; ++i) {
-        os.write_file(DATA_CONTENT[i]);
+        os.write(DATA_CONTENT[i]);
     }
     os.close();
 

@@ -77,7 +77,7 @@ public:
     // TODO WE MAY CHANGE THE SIGNATURE TO GIVE HIM DIRECTLY A LIST OF int_least32_t
     // TODO
 
-    char *write_file(){
+    char *write(){
         //srand(time(NULL));
         int i;
         int fd;
@@ -107,7 +107,7 @@ public:
          * have the file actually have the new size.
          * Just writing an empty string at the current file position will do.
          */
-        result = write(fd, "", 1);
+        result = ::write(fd, "", 1);
         if (result != 1) {
         	::close(fd);
         	perror("Error writing last byte of the file");

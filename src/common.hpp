@@ -63,7 +63,7 @@ public:
     virtual ~AbstractOutputstream() = default;
 
     virtual void create(const char* const) = 0;
-    virtual void write_file (int_least32_t elem) = 0;
+    virtual void write (int_least32_t elem) = 0;
     virtual void close() = 0;
 };
 

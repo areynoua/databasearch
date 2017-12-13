@@ -18,7 +18,7 @@ public:
     virtual ~OutputStream2();
 
     void create(const char* const) override;
-    void write_file(int_least32_t) override;
+    void write(int_least32_t) override;
     void close() override;
 };
 
@@ -34,7 +34,7 @@ void OutputStream2::create(const char* const filename) {
     }
 }
 
-void OutputStream2::write_file(int_least32_t number) {
+void OutputStream2::write(int_least32_t number) {
     ssize_t written_size(fwrite(&number, 4, 1, file_pointer));
 
     if (written_size != 1) {
