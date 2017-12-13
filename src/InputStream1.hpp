@@ -18,15 +18,21 @@ class InputStream1 final : virtual public AbstractInputstream {
 
 public:
     InputStream1(): fd(-1), read_size(0) {}
+    virtual ~InputStream1();
+
     void open(const char* const) override;
     int_least32_t read_next() override;
     inline bool end_of_stream() override;
+    void close() override;
 };
 
+InputStream1::~InputStream1() {
+    close();
+}
 
-void InputStream1::open(const char* filename) {
+void InputStream1::open(const char* const filename) {
     fd = ::open(filename, O_RDONLY | O_LARGEFILE);
-    if (fd == -1) {
+    if (fd < 0) {
         throw FileOpenException(errno);
     }
     read_next(); // fill the buffer
@@ -58,6 +64,17 @@ int_least32_t InputStream1::read_next() {
 
 bool InputStream1::end_of_stream() {
     return read_size == 0;
+}
+
+void InputStream1::close() {
+    if (fd != -1) {
+        if (::close(fd) == 0) {
+            fd = -1;
+        }
+        else {
+            throw FileCloseException(errno);
+        }
+    }
 }
 
 #endif

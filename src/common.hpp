@@ -27,6 +27,24 @@ public:
     virtual const char* what() const noexcept { return std::strerror(_errno); }
 };
 
+class FileWriteException : public std::exception {
+    int _errno;
+public:
+    virtual ~FileWriteException() = default;
+
+    FileWriteException(int const errcode) : _errno(errcode) {}
+    virtual const char* what() const noexcept { return std::strerror(_errno); }
+};
+
+class FileCloseException : public std::exception {
+    int _errno;
+public:
+    virtual ~FileCloseException() = default;
+
+    FileCloseException(int const errcode) : _errno(errcode) {}
+    virtual const char* what() const noexcept { return std::strerror(_errno); }
+};
+
 // Bases
 
 class AbstractInputstream {
@@ -36,6 +54,8 @@ public:
     virtual void open(const char* const infilename) = 0;
     virtual int_least32_t read_next() = 0;
     virtual bool end_of_stream() = 0;
+
+    virtual void close() = 0;
 };
 
 class AbstractOutputstream {
@@ -50,10 +70,17 @@ public:
 // Utils
 
 int_least32_t charsToInt32 (const char* const chars) {
-    return (static_cast<int_least32_t>(chars[0]) << 24)
-        | (static_cast<int_least32_t>(chars[1]) << 16)
-        | (static_cast<int_least32_t>(chars[2]) << 8)
-        | (static_cast<int_least32_t>(chars[3]));
+    return (static_cast<int_least32_t>(chars[0]))
+        | (static_cast<int_least32_t>(chars[1]) << 8)
+        | (static_cast<int_least32_t>(chars[2]) << 16)
+        | (static_cast<int_least32_t>(chars[3]) << 24);
+}
+
+void int32ToChars (char dest[4], const int_least32_t& number) {
+    dest[0] = static_cast<char>(number);
+    dest[1] = static_cast<char>(number >> 8);
+    dest[2] = static_cast<char>(number >> 16);
+    dest[3] = static_cast<char>(number >> 24);
 }
 
 #include <iostream>

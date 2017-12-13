@@ -1,15 +1,92 @@
 #include <cstring> // strcmp
 #include <iostream>
-#include "memoryMapping.hpp"
+#include <iomanip>
+#include <utility>
+//#include "memoryMapping.hpp"
 #include "InputStream1.hpp"
 #include "OutputStream1.hpp"
 #include "InputStream2.hpp"
 #include "OutputStream2.hpp"
-#include "InputStream3.hpp"
+//#include "InputStream3.hpp"
+
 
 void noop();
 
+void testStreams(AbstractOutputstream & os, AbstractInputstream & is, const char* const desc) {
+    /* Test `os` and `is`, `desc` is a short description included in report messages
+     * 1. Use `os` write a file identical to the 'data' file (from hard-coded content)
+     * 2. Use `is` to read the 'data' binary file (check with hard-coded content)
+     * 3. Use `is` to read the data written by `os` (and check with the hard-coded content)
+     *
+     * The file written is named `desc` + ".out"
+     */
+
+    // reference
+    const char DATA_FILENAME[]{"data"};
+    const size_t DATA_SIZE(5);
+    const int_least32_t DATA_CONTENT[DATA_SIZE]{97, 65, 16843009, 65537, -3};
+    // out
+    const char OUT_EXT[]{".out"};
+    char * out_filename = new char[strlen(desc) + strlen(OUT_EXT) + 1];
+    strcpy(out_filename, desc);
+    strcat(out_filename, OUT_EXT);
+
+    // in
+    const size_t IN_FILES(2);
+    const char * const IN_FILENAMES[2]{DATA_FILENAME, out_filename};
+
+    // 1. Use `os` write a file identical to the 'data' file (from hard-coded content)
+    std::cout << "BEGIN: Test output " << desc << " to   " << out_filename << "." << std::endl;
+    /* This does not check the data written. Execute
+     *     diff DATA_FILENAME out_filename
+     * or
+     *     vimdiff DATA_FILENAME out_filename
+     * to check it.
+     */
+
+    os.create(out_filename);
+    for (size_t i = 0; i < DATA_SIZE; ++i) {
+        os.write_file(DATA_CONTENT[i]);
+    }
+    os.close();
+
+    std::cout << "END  : Test output " << desc << " to   " << out_filename << ".\n" << std::endl;
+
+    // 2. Use `is` to read the 'data' binary file (check with hard-coded content)
+    // 3. Use `is` to read the data written by `os` (and check with the hard-coded content)
+    for (size_t f = 0; f < IN_FILES; ++f) {
+        const char * const in_filename = IN_FILENAMES[f];
+        std::cout << "BEGIN: Test input  " << desc << " from " << in_filename << "." << std::endl;
+
+        is.open(in_filename);
+        size_t i = 0;
+        while (!is.end_of_stream() && i < DATA_SIZE) {
+            int_least32_t read = is.read_next();
+            if (DATA_CONTENT[i] != read) {
+                std::cerr << "       " << i << ": "
+                    << std::setw(10) << DATA_CONTENT[i] << " expected but " << std::setw(10) << read << " found."
+                    << std::endl;
+            }
+            ++i;
+        }
+        if (i != DATA_SIZE) {
+            std::cerr << "       Did not stop at the end (at " << i << " instead of " << DATA_SIZE << ")" << std::endl;
+        }
+        while (!is.end_of_stream()) {
+            int_least32_t read = is.read_next();
+            std::cerr << "       " << i << ": " << std::setw(10) << read << " found." << std::endl;
+            ++i;
+        }
+
+        std::cout << "END  : Test input  " << desc << " from " << in_filename << ".\n" << std::endl;
+
+        is.close();
+    }
+}
+
 int main(int argc, char* argv[]) {
+
+    static_assert(__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__, "Bad endian");
     if (argc < 2) {
         std::cerr << "Need argument" << std::endl;
     }
@@ -18,28 +95,16 @@ int main(int argc, char* argv[]) {
         std::cout << "OK. Nothing done." << std::endl;
     }
     else if (strcmp(argv[1], "1") == 0) {
-        OutputStream1 os = OutputStream1();
-        os.create(argv[2]);
-        os.write_file(111); // FIXME: write_file behave well only when no implicit conversion occurs on the method paramter
-        os.write_file(-2);
-        os.write_file(3);
-        os.write_file(-30884);
-        os.close();
-
-        std::cout << "expected: 111 -2 3 -30884" << std::endl;
-        InputStream1 is = InputStream1();
-        is.open(argv[2]);
-        print_all(is);
+        OutputStream1 os;
+        InputStream1 is;
+        testStreams(os, is, "test1");
     }
     else if (strcmp(argv[1], "2") == 0) {
-        OutputStream1 os = OutputStream1();
-        os.create(argv[2]);
-        os.write_file(111);
-        os.write_file(-45);
-        InputStream2 is = InputStream2();
-        is.open(argv[2]);
-        is.read_all();
+        OutputStream2 os;
+        InputStream2 is;
+        testStreams(os, is, "test2");
     }
+    /*
     else if (strcmp(argv[1], "buffered") == 0) {
         BufferedInputstream<2> bis = BufferedInputstream<2>();
         bis.open("random.16");
@@ -57,8 +122,9 @@ int main(int argc, char* argv[]) {
         //data = mmap.writeFile();
         data = mmap.read_file();
     }
+    */
 
-    return 0;
+        return 0;
 }
 
 void noop() {

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <cstdint>
+#include <error.h>
 
 #include "common.hpp"
 
@@ -12,52 +13,67 @@ class InputStream2 final : virtual public AbstractInputstream {
 private:
     static const size_t SIZE = 32 / 8; // 32 bits
     FILE *file_pointer;
-    char buffer[SIZE];
-    size_t read_size;
+    int_least32_t read_value;
+    ssize_t read_size;
+
 public:
-    InputStream2(): file_pointer(nullptr), read_size(0){}
+    InputStream2()
+        : file_pointer(nullptr), read_value(0), read_size(0) {}
+    InputStream2(const InputStream2&) = delete;
+    InputStream2& operator=(const InputStream2&) = delete;
+    virtual ~InputStream2();
+
     void open(const char* const) override;
     int_least32_t read_next() override;
     bool end_of_stream() override;
+    void close() override;
 };
 
+InputStream2::~InputStream2() {
+    close();
+    delete file_pointer;
+}
 
-void InputStream2::open(const char* filename){
+void InputStream2::open(const char* const filename) {
     file_pointer = fopen(filename, "r");
     if (file_pointer == nullptr) {
         throw FileOpenException(errno);
     }
-    fseek(file_pointer, 0, SEEK_SET); // TODO: is it really needed ?
-    read_next(); // fill the buffer
+    // fill read_value
+    read_next();
 }
 
-int_least32_t InputStream2::read_next(){
-    /* Return the value in the buffer when the function is called
-     * and fill the buffer for the next value.
+int_least32_t InputStream2::read_next() {
+    /* Return the last value read
+     * and fill read_value with the next value.
      * This allow to handle end_of_stream conveniently. */
 
-    int_least32_t value(0);
+    int_least32_t value(read_value);
 
-    if (read_size == SIZE) {
-        value = charsToInt32(buffer);
-    }
-    else {
-        if (read_size > 0) {
-            error(0, 0, "Last %ld bytes ignored (4 bytes expected)", read_size);
-        }
-        else if (read_size < 0) {
-            throw FileReadException(errno);
+    if (read_size != 1) {
+        if (ferror(file_pointer)) {
+            throw FileReadException(EIO);
         }
     }
 
-    // FIXME: fread does not work this way
-    read_size = fread(buffer, SIZE, 1, file_pointer);
+    read_size = fread(&read_value, SIZE, 1, file_pointer);
 
     return value;
 }
 
-bool InputStream2::end_of_stream(){
-    return read_size == 0;
+bool InputStream2::end_of_stream() {
+    return feof(file_pointer);
+}
+
+void InputStream2::close() {
+    if (file_pointer != nullptr) {
+        if (fclose(file_pointer) == 0) {
+            file_pointer = nullptr;
+        }
+        else {
+            throw FileCloseException(errno);
+        }
+    }
 }
 
 #endif
