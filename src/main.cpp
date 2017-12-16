@@ -9,7 +9,7 @@
 #include "OutputStream2.hpp"
 //#include "InputStream3.hpp"
 
-
+#include "merge.cpp"
 void noop();
 
 void testStreams(AbstractOutputstream & os, AbstractInputstream & is, const char* const desc) {
@@ -95,9 +95,10 @@ int main(int argc, char* argv[]) {
         std::cout << "OK. Nothing done." << std::endl;
     }
     else if (strcmp(argv[1], "1") == 0) {
-        OutputStream1 os;
-        InputStream1 is;
-        testStreams(os, is, "test1");
+        OutputStream1* os = new OutputStream1();
+        InputStream1* is = new InputStream1();
+        //testStreams(os, is, "test1");
+        dway_merge(is,os);
     }
     else if (strcmp(argv[1], "2") == 0) {
         OutputStream2 os;
