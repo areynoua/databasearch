@@ -7,7 +7,8 @@
 #include "OutputStream1.hpp"
 #include "InputStream2.hpp"
 #include "OutputStream2.hpp"
-//#include "InputStream3.hpp"
+#include "InputStream3.hpp"
+#include "OutputStream3.hpp"
 
 #include "merge.cpp"
 void noop();
@@ -105,16 +106,24 @@ int main(int argc, char* argv[]) {
         InputStream2 is;
         testStreams(os, is, "test2");
     }
-    /*
-    else if (strcmp(argv[1], "buffered") == 0) {
-        BufferedInputstream<2> bis = BufferedInputstream<2>();
-        bis.open("random.16");
+
+    else if (strcmp(argv[1], "3") == 0) {
+
+        OutputStream3<2> os = OutputStream3<2>();
+        os.create("TestOutput3");
+        os.write(11);
+        os.write(12);
+        os.write(14);
+        os.write(24);
+        os.close();
+
+        InputStream3<2> is = InputStream3<2>();
+        is.open("TestOutput3");
         for (int i = 0; i < 4; ++i) {
-            std::cout << bis.read_next() << std::endl;
+            std::cout << is.read_next() << std::endl;
         }
-        std::cout << bis.end_of_stream() << std::endl;
     }
-    else {
+    /*else {
         // TESTING MEMORY_MAPPING, IMPLEMENTATION 4
         char *data;
         char* filename = argv[1];

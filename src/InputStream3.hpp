@@ -1,13 +1,11 @@
-#ifndef __IMPL3_H__
-#define __IMPL3_H__
+#ifndef DEF_INPUTSTREAM3
+#define DEF_INPUTSTREAM3
 
 #include <cstdint> // int_least32_t
 #include <fcntl.h>
 #include <fstream>
-#include <sys/stat.h>
-#include <sys/types.h>
-
 #include <iostream>
+#include <unistd.h>
 
 #include "common.hpp"
 
@@ -15,36 +13,37 @@
 using string=std::string;
 
 template <size_t _bufferSize>
-class BufferedInputstream : virtual public AbstractInputstream {
+class InputStream3 final : virtual public AbstractInputstream {
     char _buffer[_bufferSize*4];
     int _fd = -1;
     size_t _next = 0;
     size_t _max = 0;
     bool _eof = false;
 public:
-    BufferedInputstream();
-    void open(const char*);
-    int_least32_t read_next();
-    bool end_of_stream();
+    InputStream3(){}
+    virtual ~InputStream3();
+    void open(const char* const) override;
+    int_least32_t read_next() override;
+    bool end_of_stream() override;
+    void close() override;
 private:
-    inline int_least32_t charsToInt32(char* chars);
     void fillBuffer();
 };
 
 template <size_t _bufferSize>
-BufferedInputstream<_bufferSize>::BufferedInputstream() {
-
+InputStream3<_bufferSize>::~InputStream3() {
+    close();
 }
 
 template <size_t _bufferSize>
-void BufferedInputstream<_bufferSize>::open(const char *pathname) {
+void InputStream3<_bufferSize>::open(const char* const pathname) {
     _fd = ::open(pathname, O_RDONLY | O_LARGEFILE);
     // TODO: throw error if fd < 0
     std::cout << pathname << std::endl;
 }
 
 template <size_t _bufferSize>
-int_least32_t BufferedInputstream<_bufferSize>::read_next() {
+int_least32_t InputStream3<_bufferSize>::read_next() {
     if (_next == _max) {
         _max = read(_fd, _buffer, _bufferSize*4);
         std::cout << _max << " bytes read from file" << std::endl;
@@ -62,17 +61,20 @@ int_least32_t BufferedInputstream<_bufferSize>::read_next() {
 }
 
 template <size_t _bufferSize>
-bool BufferedInputstream<_bufferSize>::end_of_stream() {
+bool InputStream3<_bufferSize>::end_of_stream() {
     // FIXME
     return _eof;
 }
-
 template <size_t _bufferSize>
-int_least32_t BufferedInputstream<_bufferSize>::charsToInt32 (char* chars) {
-    return (static_cast<int_least32_t>(chars[0]) << 24)
-        | (static_cast<int_least32_t>(chars[1]) << 16)
-        | (static_cast<int_least32_t>(chars[2]) << 8)
-        | (static_cast<int_least32_t>(chars[3]));
+void InputStream3<_bufferSize>::close() {
+    if (_fd != -1) {
+        if (::close(_fd) == 0) {
+            _fd = -1;
+        }
+        else {
+            throw FileCloseException(errno);
+        }
+    }
 }
 
 #endif // __IMPL3_H__
