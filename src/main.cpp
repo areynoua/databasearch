@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
         os.write(11);
         os.write(12);
         os.write(14);
-        os.write(24);
+//        os.write(24);
         os.close();
 
         InputStream3<2> is = InputStream3<2>();

@@ -66,6 +66,9 @@ void OutputStream3<_bufferSize>::write(int number) {
 template <size_t _bufferSize>
 void OutputStream3<_bufferSize>::close() {
     if (_fd != -1) {
+        if (_next != 0){
+            ::write(_fd,_buffer,_next);
+        }
         if (::close(_fd) == 0) {
             _fd = -1;
         }
