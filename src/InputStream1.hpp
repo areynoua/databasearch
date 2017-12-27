@@ -5,6 +5,10 @@
 
 using namespace std;
 
+/**
+ * Stream on 32 bits without buffer
+ * has a "buffer" of 4 bytes
+ */
 class InputStream1 final : virtual public AbstractInputstream {
     static const size_t SIZE = 32 / 8; // 32 bits
     int fd;

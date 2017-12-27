@@ -20,11 +20,11 @@ void InputStream1::open(const char* const filename) {
 int_least32_t InputStream1::read_next() {
     /* Return the value in the buffer when the function is called
      * and fill the buffer for the next value.
-     * This allow to handle end_of_stream conveniently. */
+     * This allows to handle end_of_stream conveniently. */
 
     int_least32_t value(0);
 
-    if (read_size == SIZE) {
+    if (read_size == SIZE) { // OK
         value = charsToInt32(buffer);
     }
     else {
@@ -34,9 +34,13 @@ int_least32_t InputStream1::read_next() {
         else if (read_size < 0) {
             throw FileReadException(errno);
         }
+        // (read_size == 0) { first call (from constructor) or EOF }
     }
 
     read_size = read(fd, buffer, SIZE);
+    if (read_size < 0) {
+        throw FileReadException(errno);
+    }
 
     return value;
 }

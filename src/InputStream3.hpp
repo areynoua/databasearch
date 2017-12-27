@@ -2,6 +2,7 @@
 #define DEF_INPUTSTREAM3
 
 #include <cstdint> // int_least32_t
+#include <error.h>
 #include <fcntl.h>
 #include <fstream>
 #include <iostream>
@@ -9,16 +10,13 @@
 
 #include "common.hpp"
 
-// using int32_filebuf = std::basic_filebuf<std::int_least32_t, std::char_traits<char32_t>>;
-using string=std::string;
-
-template <size_t _bufferSize>
+template <size_t _bufferSize> /* the number of int32 */
 class InputStream3 final : virtual public AbstractInputstream {
-    char _buffer[_bufferSize*4];
+    static const size_t SIZE = 32 / 8; /* the number of bytes in 1 int32 */
+    char _buffer[_bufferSize*SIZE];
     int _fd = -1;
-    size_t _next = 0;
-    size_t _max = 0;
-    bool _eof = false;
+    size_t _next = 0; /* in bytes */
+    size_t _read_size = 0; /* in bytes */
 public:
     InputStream3(){}
     virtual ~InputStream3();
@@ -38,32 +36,44 @@ InputStream3<_bufferSize>::~InputStream3() {
 template <size_t _bufferSize>
 void InputStream3<_bufferSize>::open(const char* const pathname) {
     _fd = ::open(pathname, O_RDONLY | O_LARGEFILE);
-    // TODO: throw error if fd < 0
-    std::cout << pathname << std::endl;
+    if (_fd < 0) {
+        throw FileOpenException(errno);
+    }
+    read_next(); // fill the buffer
 }
 
 template <size_t _bufferSize>
 int_least32_t InputStream3<_bufferSize>::read_next() {
-    if (_next == _max) {
-        _max = read(_fd, _buffer, _bufferSize*4);
-        std::cout << _max << " bytes read from file" << std::endl;
-        if (_max == 0) {
-            _eof = true;
+    int_least32_t value(0);
+
+    if (_next + SIZE <= _read_size) { // OK: enough bytes to read
+        value = charsToInt32(&(_buffer[_next]));
+        _next += SIZE;
+    }
+    else {
+        if (_read_size > 0) {
+            error(0, 0, "Last %ld bytes ignored (%ld bytes expected)", _read_size, SIZE);
         }
-        // TODO: if max == 0: EOF
-        // TODO: if max < 0: ERROR
-        // TODO: not multiple of 4 bytes
+        else if (_read_size < 0) {
+            throw FileReadException(errno);
+        }
+        // (_read_size == 0) { first call (from constructor) or EOF }
+    }
+
+    if (_next == _read_size) {
+        _read_size = read(_fd, _buffer, _bufferSize*SIZE);
+        if (_read_size < 0) {
+            throw FileReadException(errno);
+        }
         _next = 0;
     }
-    int_least32_t ret = charsToInt32(&(_buffer[_next]));
-    _next += 4;
-    return ret;
+
+    return value;
 }
 
 template <size_t _bufferSize>
 bool InputStream3<_bufferSize>::end_of_stream() {
-    // FIXME
-    return _eof;
+    return _read_size == 0;
 }
 template <size_t _bufferSize>
 void InputStream3<_bufferSize>::close() {
