@@ -10,12 +10,12 @@
 #include "InputStream3.hpp"
 #include "OutputStream3.hpp"
 
-#include "merge.cpp"
+// #include "merge.cpp"
 void noop();
 
 void testStreams(AbstractOutputstream & os, AbstractInputstream & is, const char* const desc) {
     /* Test `os` and `is`, `desc` is a short description included in report messages
-     * 1. Use `os` write a file identical to the 'data' file (from hard-coded content)
+     * 1. Use `os` to write a file identical to the 'data' file (from hard-coded content)
      * 2. Use `is` to read the 'data' binary file (check with hard-coded content)
      * 3. Use `is` to read the data written by `os` (and check with the hard-coded content)
      *
@@ -96,10 +96,10 @@ int main(int argc, char* argv[]) {
         std::cout << "OK. Nothing done." << std::endl;
     }
     else if (strcmp(argv[1], "1") == 0) {
-        OutputStream1* os = new OutputStream1();
-        InputStream1* is = new InputStream1();
-        //testStreams(os, is, "test1");
-        dway_merge(is,os);
+        OutputStream1 os;
+        InputStream1 is;
+        testStreams(os, is, "test1");
+        //dway_merge(is,os);
     }
     else if (strcmp(argv[1], "2") == 0) {
         OutputStream2 os;
@@ -108,20 +108,23 @@ int main(int argc, char* argv[]) {
     }
 
     else if (strcmp(argv[1], "3") == 0) {
+        OutputStream3<4> os;
+        InputStream3<4> is;
+        testStreams(os, is, "test3");
 
-        OutputStream3<2> os = OutputStream3<2>();
-        os.create("TestOutput3");
-        os.write(11);
-        os.write(12);
-        os.write(14);
-//        os.write(24);
-        os.close();
-
-        InputStream3<2> is = InputStream3<2>();
-        is.open("TestOutput3");
-        for (int i = 0; i < 4; ++i) {
-            std::cout << is.read_next() << std::endl;
-        }
+//        OutputStream3<2> os = OutputStream3<2>();
+//        os.create("TestOutput3");
+//        os.write(11);
+//        os.write(12);
+//        os.write(14);
+////        os.write(24);
+//        os.close();
+//
+//        InputStream3<2> is = InputStream3<2>();
+//        is.open("TestOutput3");
+//        for (int i = 0; i < 4; ++i) {
+//            std::cout << is.read_next() << std::endl;
+//        }
     }
     /*else {
         // TESTING MEMORY_MAPPING, IMPLEMENTATION 4

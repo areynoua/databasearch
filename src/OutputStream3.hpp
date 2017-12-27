@@ -1,11 +1,6 @@
 #ifndef DEF_OUTPUTSTREAM3
 #define DEF_OUTPUTSTREAM3
 
-#include <error.h>
-#include <fcntl.h>
-#include <iostream>
-#include <unistd.h>
-
 #include "common.hpp"
 
 using namespace std;
@@ -23,10 +18,12 @@ public:
     void create(const char* const) override;
     void write(int_least32_t elem) override;
     void close() override;
-private:
-    void int32ToChars(char*, const int_least32_t&, int);
-
 };
+
+#include <error.h>
+#include <fcntl.h>
+#include <iostream>
+#include <unistd.h>
 
 template <size_t _bufferSize>
 OutputStream3<_bufferSize>::~OutputStream3() {
@@ -47,7 +44,7 @@ void OutputStream3<_bufferSize>::create(const char* const filename) {
 
 template <size_t _bufferSize>
 void OutputStream3<_bufferSize>::write(int number) {
-    int32ToChars(_buffer,number, _next);
+    int32ToChars(&(_buffer[_next]), number);
     _next += 4;
     if (_next == _bufferSize*4) {
         ssize_t written_size = ::write(_fd,_buffer,_bufferSize*4);
@@ -78,17 +75,6 @@ void OutputStream3<_bufferSize>::close() {
     }
 }
 
-
-
-//Temporary ?
-template <size_t _bufferSize>
-void OutputStream3<_bufferSize>::int32ToChars (char dest[], const int_least32_t& number, int index) {
-    dest[index] = static_cast<char>(number);
-    dest[index+1] = static_cast<char>(number >> 8);
-    dest[index+2] = static_cast<char>(number >> 16);
-    dest[index+3] = static_cast<char>(number >> 24);
-}
-
-
 #endif
+
 // vim: set shiftwidth=4 softtabstop=4 spell spelllang=en:

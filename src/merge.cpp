@@ -1,7 +1,11 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+
 #include "common.hpp"
+
+#include "merge.hpp"
+
 using namespace std;
 
 // merges arrays of k sub-arrays using a min-heap
@@ -68,3 +72,5 @@ void dway_merge(AbstractInputstream* is, AbstractOutputstream* os){
         cout << value << " ";
     cout << endl;
 }
+
+// vim: set shiftwidth=4 softtabstop=4 spell spelllang=en:
