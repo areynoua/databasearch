@@ -11,6 +11,9 @@
 #define NUMINTS (16)
 #define FILE_LENGTH (NUMINTS * 1)
 
+// TODO: we should try with and without the MAP_HUGETLB flag
+// see: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/vm/hugetlbpage.txt
+
 class MemoryMapping{
     char* filename;
 
