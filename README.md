@@ -60,13 +60,9 @@ TODO
 
 ## d-way merge
 
-In progress
-
-TODO: Note here what more needs to be done.
-
 ### Implementation
 
-TODO
+Done
 
 #### Report
 
