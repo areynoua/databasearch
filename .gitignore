@@ -10,7 +10,7 @@ random.*
 *.bak
 
 # Prerequisites
-*.d
+#*.d
 *.d.[0-9]*
 
 # Compiled Object files
