@@ -11,23 +11,71 @@
 #include "OutputStream2.hpp"
 #include "InputStream3.hpp"
 #include "OutputStream3.hpp"
+#include "merge.hpp"
 
-// #include "merge.cpp"
-void noop();
+/**
+ * Use std::rand to return a pseudo random number between -2^(31) and 2^(31)-1.
+ * note: std::rand return a value between 0 and RAND_MAX with RAND_MAX >= 2^15 - 1
+ */
+inline int_least32_t rand32() {
+    char chars[4];
+    chars[0] = static_cast<char>(std::rand());
+    chars[1] = static_cast<char>(std::rand());
+    chars[2] = static_cast<char>(std::rand());
+    chars[3] = static_cast<char>(std::rand());
+    return charsToInt32(chars);
+}
 
+/**
+ * Generate convenient files with int32 values.
+ * Each string in argv[2:] is interpreted as the size of a file.
+ * For example with argc = 5 and argv = {"./streams", "generate", "4", "4", "12"}
+ * this will produce data.1 with 4 numbers, data.2 with 4 numbers and data.3 with 12 numbers.
+ * Each time files are generated, they have the same numbers as long as the execution
+ * is in the same environment.
+ */
+void generate(int argc, char ** argv) {
+    OutputStream2 os;
+    std::ofstream otxts;
+    char filename[26];
+    char txtfilename[29];
+    for (int f = 2; f < argc; ++f) {
+        std::srand(static_cast<unsigned>(f));
+        size_t size = strtoll(argv[f], nullptr, 10);
+
+        int success = snprintf(filename, 26, "data.%d", f-1);
+        snprintf(txtfilename, 29, "data.%d.txt", f-1);
+        if (success < 5 || success > 24 || size < 1) {
+            std::cerr << "Bad file size" << std::endl;
+            continue;
+        }
+        os.create(filename);
+        otxts.open(txtfilename, ios_base::trunc | ios_base::out);
+        for (size_t i = 0; i < size; ++i) {
+            int_least32_t value = rand32();
+            os.write(value);
+            otxts << value << "\n";
+        }
+        otxts << std::flush;
+        otxts.close();
+        os.close();
+    }
+}
+
+/**
+ * Test `os` and `is`, `desc` is a short description included in report messages
+ * 1. Use `os` to write a file identical to the 'data' file (from hard-coded content)
+ * 2. Use `is` to read the 'data' binary file (check with hard-coded content)
+ * 3. Use `is` to read the data written by `os` (and check with the hard-coded content)
+ *
+ * The file written is named `desc` + ".out"
+ */
 void testStreams(AbstractOutputstream & os, AbstractInputstream & is, const char* const desc) {
-    /* Test `os` and `is`, `desc` is a short description included in report messages
-     * 1. Use `os` to write a file identical to the 'data' file (from hard-coded content)
-     * 2. Use `is` to read the 'data' binary file (check with hard-coded content)
-     * 3. Use `is` to read the data written by `os` (and check with the hard-coded content)
-     *
-     * The file written is named `desc` + ".out"
-     */
-
     // reference
     const char DATA_FILENAME[]{"data"};
     const size_t DATA_SIZE(5);
     const int_least32_t DATA_CONTENT[DATA_SIZE]{97, 65, 16843009, 65537, -3};
+
     // out
     const char OUT_EXT[]{".out"};
     char * out_filename = new char[strlen(desc) + strlen(OUT_EXT) + 1];
@@ -154,6 +202,12 @@ int main(int argc, char* argv[]) {
         for (size_t i = 0; i < isc; ++i) {
             delete isv[i];
         }
+    }
+    else if (strcmp(argv[1], "generate") == 0) {
+        if (argc < 3) {
+            std::cerr << argv[0] << " generate size_of_file_0 [ size_of_file_1 [ size_of_file_2 [ ... ] ] ]" << std::endl;
+        }
+        generate(argc, argv);
     }
 
     return EXIT_SUCCESS;
