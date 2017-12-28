@@ -70,12 +70,7 @@ public:
 
 // Utils
 
-//inline int_least32_t charsToInt32 (const char* const chars);
 inline int_least32_t charsToInt32 (const char* const chars) {
-    // return (static_cast<int_least32_t>(chars[0]))
-    //     | (static_cast<int_least32_t>(chars[1]) << 8)
-    //     | (static_cast<int_least32_t>(chars[2]) << 16)
-    //     | (static_cast<int_least32_t>(chars[3]) << 24);
     return *(reinterpret_cast<const int32_t* const>(chars));
 }
 

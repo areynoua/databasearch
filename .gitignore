@@ -4,6 +4,13 @@ src/streams
 # Random files
 random.*
 
+# Sorted files
+sorted.1
+sorted.12
+sorted.123
+sorted.2
+sorted.3
+
 # Backup files
 *~
 *.default

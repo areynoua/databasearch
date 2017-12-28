@@ -1,4 +1,6 @@
 #include <cstring> // strcmp
+#include <cstdlib> // strtol, EXIT_FAILURE, EXIT_SUCCESS, rand, srand
+#include <fstream> // ofstream
 #include <iostream>
 #include <iomanip>
 #include <utility>
@@ -42,7 +44,7 @@ void testStreams(AbstractOutputstream & os, AbstractInputstream & is, const char
      *     diff DATA_FILENAME out_filename
      * or
      *     vimdiff DATA_FILENAME out_filename
-     * to check it.
+     * to check it (see makefile).
      */
 
     os.create(out_filename);
@@ -85,46 +87,42 @@ void testStreams(AbstractOutputstream & os, AbstractInputstream & is, const char
     }
 }
 
-int main(int argc, char* argv[]) {
+/** TODO */
+void testMerge(size_t isc, AbstractInputstream * isv[], AbstractOutputstream & os) {
+    char in_filename[9];
+    for (size_t i = 0; i < isc; ++i) {
+        snprintf(in_filename, 9, "sorted.%lu", i+1);
+        isv[i]->open(in_filename);
+    }
+    os.create("merge.out");
+    merge(isc, isv, os);
+    for (size_t i = 0; i < isc; ++i) {
+        isv[i]->close();
+    }
+    os.close();
+}
 
+int main(int argc, char* argv[]) {
     static_assert(__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__, "Bad endian");
+
     if (argc < 2) {
         std::cerr << "Need argument" << std::endl;
-    }
-    if (strcmp(argv[1], "nothing") == 0) {
-        noop();
-        std::cout << "OK. Nothing done." << std::endl;
+        exit(EXIT_FAILURE);
     }
     else if (strcmp(argv[1], "1") == 0) {
         OutputStream1 os;
         InputStream1 is;
         testStreams(os, is, "test1");
-        //dway_merge(is,os);
     }
     else if (strcmp(argv[1], "2") == 0) {
         OutputStream2 os;
         InputStream2 is;
         testStreams(os, is, "test2");
     }
-
     else if (strcmp(argv[1], "3") == 0) {
         OutputStream3<4> os;
         InputStream3<4> is;
         testStreams(os, is, "test3");
-
-//        OutputStream3<2> os = OutputStream3<2>();
-//        os.create("TestOutput3");
-//        os.write(11);
-//        os.write(12);
-//        os.write(14);
-////        os.write(24);
-//        os.close();
-//
-//        InputStream3<2> is = InputStream3<2>();
-//        is.open("TestOutput3");
-//        for (int i = 0; i < 4; ++i) {
-//            std::cout << is.read_next() << std::endl;
-//        }
     }
     /*else {
         // TESTING MEMORY_MAPPING, IMPLEMENTATION 4
@@ -136,12 +134,29 @@ int main(int argc, char* argv[]) {
         data = mmap.read_file();
     }
     */
+    else if (strcmp(argv[1], "merge") == 0) {
+        if (argc < 3) {
+            std::cerr << "How many streams ?" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        size_t isc(strtol(argv[2], nullptr, 10)); // Number of streams
+        if (!(0 < isc && isc <= 3)) {
+            std::cerr << "Only 1 to 3 streams supported to test for now (due to 3 sorted.x files only)" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        AbstractInputstream ** isv = new AbstractInputstream*[isc];
+        for (size_t i = 0; i < isc; ++i) {
+            isv[i] = new InputStream1();
+        }
+        OutputStream1 os;
+        testMerge(isc, isv, os);
 
-        return 0;
-}
+        for (size_t i = 0; i < isc; ++i) {
+            delete isv[i];
+        }
+    }
 
-void noop() {
-    // no operation
+    return EXIT_SUCCESS;
 }
 
 // vim: set shiftwidth=4 softtabstop=4 spell spelllang=en:
