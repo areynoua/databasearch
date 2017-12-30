@@ -43,7 +43,7 @@ inline int_least32_t rand32() {
  */
 void generate(char ** argv) {
     OutputStream2 os;
-    std::ofstream otxts;
+//    std::ofstream otxts;
     char filename[26];
     char txtfilename[29];
     size_t min = strtoll(argv[3], nullptr, 10);
@@ -66,14 +66,14 @@ void generate(char ** argv) {
             continue;
         }
         os.create(filename);
-        otxts.open(txtfilename, ios_base::trunc | ios_base::out);
+//        otxts.open(txtfilename, ios_base::trunc | ios_base::out);
         for (size_t i = 0; i < size; ++i) {
             int_least32_t value = rand32();
             os.write(value);
             otxts << value << "\n";
         }
-        otxts << std::flush;
-        otxts.close();
+//        otxts << std::flush;
+//        otxts.close();
         os.close();
     }
 }
