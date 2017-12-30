@@ -4,7 +4,7 @@
 #include <cstdint> // int_least32_t
 #include <sys/stat.h>
 
-#include "common.h"
+#include "common.hpp"
 
 class InputStream4 final : virtual public AbstractInputstream {
     static const size_t _pageSize = sysconf(_SC_PAGESIZE); // The page size in bytes

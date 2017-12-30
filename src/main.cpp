@@ -20,66 +20,6 @@
 #include "streamTest.hpp"
 
 
-/**
- * Use std::rand to return a pseudo random number between -2^(31) and 2^(31)-1.
- * note: std::rand return a value between 0 and RAND_MAX with RAND_MAX >= 2^15 - 1
- */
-inline int_least32_t rand32() {
-    char chars[4];
-    chars[0] = static_cast<char>(std::rand());
-    chars[1] = static_cast<char>(std::rand());
-    chars[2] = static_cast<char>(std::rand());
-    chars[3] = static_cast<char>(std::rand());
-    return charsToInt32(chars);
-}
-
-/**
- * Generate convenient files with int32 values.
- * Each string in argv[2:] is interpreted as the size of a file.
- * For example with argc = 5 and argv = {"./streams", "generate", "4", "4", "12"}
- * this will produce data.1 with 4 numbers, data.2 with 4 numbers and data.3 with 12 numbers.
- * Each time files are generated, they have the same numbers as long as the execution
- * is in the same environment.
- */
-void generate(char ** argv) {
-    OutputStream2 os;
-//    std::ofstream otxts;
-    char filename[26];
-    char txtfilename[29];
-    size_t min = strtoll(argv[3], nullptr, 10);
-    size_t max = strtoll(argv[4], nullptr, 10);
-    long max_open_file;
-    if (strcmp(argv[2],"max") == 0){
-        max_open_file = sysconf(_SC_OPEN_MAX);
-    }
-    else{
-        max_open_file = atoi(argv[2]);
-    }
-    for (int f = 1; f < max_open_file+1; ++f) {
-
-        std::srand(static_cast<unsigned>(f));
-        size_t size = rand()%(max-min) + min;
-        int success = snprintf(filename, 26, "data files/data.%d", f-1);
-        snprintf(txtfilename, 29, "data files/data.%d.txt", f-1);
-        if (success < 5 || success > 24 || size < 1) {
-            std::cerr << "Bad file size" << std::endl;
-            continue;
-        }
-        os.create(filename);
-//        otxts.open(txtfilename, ios_base::trunc | ios_base::out);
-        for (size_t i = 0; i < size; ++i) {
-            int_least32_t value = rand32();
-            os.write(value);
-            otxts << value << "\n";
-        }
-//        otxts << std::flush;
-//        otxts.close();
-        os.close();
-    }
-}
-
-
-
 
 /**
  * Test `os` and `is`, `desc` is a short description included in report messages
@@ -222,6 +162,7 @@ int main(int argc, char* argv[]) {
             delete isv[i];
         }
     }
+    // generate [nbFiles] [minQuantity] [maxQuantity]
     else if (strcmp(argv[1], "generate") == 0) {
         if (argc < 3) {
             std::cerr << argv[0] << " generate size_of_file_0 [ size_of_file_1 [ size_of_file_2 [ ... ] ] ]" << std::endl;
@@ -229,39 +170,151 @@ int main(int argc, char* argv[]) {
         generate(argv);
     }
 
-    else if (strcmp(argv[1], "test") == 0){
+    // input [1-4] [nbFiles]
+    else if (strcmp(argv[1], "input") == 0){
+        long max_open_file;
+        if (strcmp(argv[3],"max") == 0){
+            max_open_file = sysconf(_SC_OPEN_MAX);
+        }
+        else{
+            max_open_file = atoi(argv[3]);
+        }
+        vector<AbstractInputstream*> isVector;
         if (strcmp(argv[2], "1") == 0){
-            long max_open_file;
-            if (strcmp(argv[3],"max") == 0){
-                max_open_file = sysconf(_SC_OPEN_MAX);
-            }
-            else{
-                max_open_file = atoi(argv[3]);
-            }
-            vector<AbstractInputstream*> isVector;
             for (int i = 0; i < max_open_file; ++i){
                 InputStream1* is = new InputStream1();
                 isVector.push_back(is);
             }
-            benchmarkStream1(isVector);
         }
-        if (strcmp(argv[2], "2") == 0){
-            long max_open_file;
-            if (strcmp(argv[3],"max") == 0){
-                max_open_file = sysconf(_SC_OPEN_MAX);
-            }
-            else{
-                max_open_file = atoi(argv[3]);
-            }
-            vector<AbstractInputstream*> isVector;
+        else if (strcmp(argv[2], "2") == 0){
             for (int i = 0; i < max_open_file; ++i){
                 InputStream2* is = new InputStream2();
                 isVector.push_back(is);
             }
-            benchmarkStream1(isVector);
+        }
+        else if (strcmp(argv[2], "3") == 0){
+            size_t bufferSize = atoi(argv[4]);
+            for (int i = 0; i < max_open_file; ++i){
+                if (bufferSize == 2) {
+                    InputStream3<2>* is = new InputStream3<2>();
+                    isVector.push_back(is);
+                }
+                else if (bufferSize == 4) {
+                    InputStream3<4>* is = new InputStream3<4>();
+                    isVector.push_back(is);
+                }
+                else if (bufferSize == 8) {
+                    InputStream3<8>* is = new InputStream3<8>();
+                    isVector.push_back(is);
+                }
+                else if (bufferSize == 16) {
+                    InputStream3<16>* is = new InputStream3<16>();
+                    isVector.push_back(is);
+                }
+                else if (bufferSize == 32) {
+                    InputStream3<32>* is = new InputStream3<32>();
+                    isVector.push_back(is);
+                }
+                else if (bufferSize == 256) {
+                    InputStream3<256>* is = new InputStream3<256>();
+                    isVector.push_back(is);
+                }
+                else if (bufferSize == 512) {
+                    InputStream3<512>* is = new InputStream3<512>();
+                    isVector.push_back(is);
+                }
+                else if (bufferSize == 1024) {
+                    InputStream3<1024>* is = new InputStream3<1024>();
+                    isVector.push_back(is);
+                }
+                else if (bufferSize == 2048) {
+                    InputStream3<2048>* is = new InputStream3<2048>();
+                    isVector.push_back(is);
+                }
+                else if (bufferSize == 4096) {
+                    InputStream3<4096>* is = new InputStream3<4096>();
+                    isVector.push_back(is);
+                }
+                else {
+                    cout << "choose 2, 4, 8, 16, 256, 512, 1024, 2048 or 4096" << endl;
+                }
+            }
+        }
+        benchmarkInputStream(isVector);
+    }
+    // output [1-4 ][nbFiles] [minQuantity] [maxQuantity]
+    else if (strcmp(argv[1],"output") == 0){
+        long max_open_file;
+        if (strcmp(argv[3],"max") == 0){
+            max_open_file = sysconf(_SC_OPEN_MAX);
+        }
+        else{
+            max_open_file = atoi(argv[3]);
+        }
+        vector<AbstractOutputstream*> osVector;
+        if (strcmp(argv[2], "1") == 0){
+            for (int i = 0; i < max_open_file; ++i){
+                OutputStream1* os = new OutputStream1();
+                osVector.push_back(os);
+            }
+        }
+        if (strcmp(argv[2], "2") == 0){
+            for (int i = 0; i < max_open_file; ++i){
+                OutputStream2* os = new OutputStream2();
+                osVector.push_back(os);
+            }
         }
 
+        else if (strcmp(argv[2], "3") == 0){
+            size_t bufferSize = atoi(argv[6]);
+            for (int i = 0; i < max_open_file; ++i){
+                if (bufferSize == 2) {
+                    OutputStream3<2>* os = new OutputStream3<2>();
+                    osVector.push_back(os);
+                }
+                else if (bufferSize == 4) {
+                    OutputStream3<4>* os = new OutputStream3<4>();
+                    osVector.push_back(os);
+                }
+                else if (bufferSize == 8) {
+                    OutputStream3<8>* os = new OutputStream3<8>();
+                    osVector.push_back(os);
+                }
+                else if (bufferSize == 16) {
+                    OutputStream3<16>* os = new OutputStream3<16>();
+                    osVector.push_back(os);
+                }
+                else if (bufferSize == 32) {
+                    OutputStream3<32>* os = new OutputStream3<32>();
+                    osVector.push_back(os);
+                }
+                else if (bufferSize == 256) {
+                    OutputStream3<256>* os = new OutputStream3<256>();
+                    osVector.push_back(os);
+                }
+                else if (bufferSize == 512) {
+                    OutputStream3<512>* os = new OutputStream3<512>();
+                    osVector.push_back(os);
+                }
+                else if (bufferSize == 1024) {
+                    OutputStream3<1024>* os = new OutputStream3<1024>();
+                    osVector.push_back(os);
+                }
+                else if (bufferSize == 2048) {
+                    OutputStream3<2048>* os = new OutputStream3<2048>();
+                    osVector.push_back(os);
+                }
+                else if (bufferSize == 4096) {
+                    OutputStream3<4096>* os = new OutputStream3<4096>();
+                    osVector.push_back(os);
+                }
+                else {
+                    cout << "choose 2, 4, 8, 16, 256, 512, 1024, 2048 or 4096" << endl;
+                }
+            }
+        }
 
+        benchmarkOutputStream(osVector,atoi(argv[4]),atoi(argv[5]));
     }
 
     return EXIT_SUCCESS;

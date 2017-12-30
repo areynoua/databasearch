@@ -4,6 +4,9 @@ src/streams
 #data
 src/data files/data.*
 
+#output data
+src/output data/od.*
+
 # Random files
 random.*
 
