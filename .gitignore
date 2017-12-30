@@ -1,6 +1,9 @@
 # Binaries
 src/streams
 
+#data
+src/data files/data.*
+
 # Random files
 random.*
 

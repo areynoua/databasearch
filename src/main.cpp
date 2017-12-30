@@ -4,6 +4,11 @@
 #include <iostream>
 #include <iomanip>
 #include <utility>
+
+#include <unistd.h>
+
+#include <vector>
+
 //#include "memoryMapping.hpp"
 #include "InputStream1.hpp"
 #include "OutputStream1.hpp"
@@ -12,6 +17,8 @@
 #include "InputStream3.hpp"
 #include "OutputStream3.hpp"
 #include "merge.hpp"
+#include "streamTest.hpp"
+
 
 /**
  * Use std::rand to return a pseudo random number between -2^(31) and 2^(31)-1.
@@ -34,17 +41,26 @@ inline int_least32_t rand32() {
  * Each time files are generated, they have the same numbers as long as the execution
  * is in the same environment.
  */
-void generate(int argc, char ** argv) {
+void generate(char ** argv) {
     OutputStream2 os;
     std::ofstream otxts;
     char filename[26];
     char txtfilename[29];
-    for (int f = 2; f < argc; ++f) {
-        std::srand(static_cast<unsigned>(f));
-        size_t size = strtoll(argv[f], nullptr, 10);
+    size_t min = strtoll(argv[3], nullptr, 10);
+    size_t max = strtoll(argv[4], nullptr, 10);
+    long max_open_file;
+    if (strcmp(argv[2],"max") == 0){
+        max_open_file = sysconf(_SC_OPEN_MAX);
+    }
+    else{
+        max_open_file = atoi(argv[2]);
+    }
+    for (int f = 1; f < max_open_file+1; ++f) {
 
-        int success = snprintf(filename, 26, "data.%d", f-1);
-        snprintf(txtfilename, 29, "data.%d.txt", f-1);
+        std::srand(static_cast<unsigned>(f));
+        size_t size = rand()%(max-min) + min;
+        int success = snprintf(filename, 26, "data files/data.%d", f-1);
+        snprintf(txtfilename, 29, "data files/data.%d.txt", f-1);
         if (success < 5 || success > 24 || size < 1) {
             std::cerr << "Bad file size" << std::endl;
             continue;
@@ -62,6 +78,9 @@ void generate(int argc, char ** argv) {
     }
 }
 
+
+
+
 /**
  * Test `os` and `is`, `desc` is a short description included in report messages
  * 1. Use `os` to write a file identical to the 'data' file (from hard-coded content)
@@ -72,7 +91,7 @@ void generate(int argc, char ** argv) {
  */
 void testStreams(AbstractOutputstream & os, AbstractInputstream & is, const char* const desc) {
     // reference
-    const char DATA_FILENAME[]{"data"};
+    const char DATA_FILENAME[]{"data files/data"};
     const size_t DATA_SIZE(5);
     const int_least32_t DATA_CONTENT[DATA_SIZE]{97, 65, 16843009, 65537, -3};
 
@@ -207,7 +226,42 @@ int main(int argc, char* argv[]) {
         if (argc < 3) {
             std::cerr << argv[0] << " generate size_of_file_0 [ size_of_file_1 [ size_of_file_2 [ ... ] ] ]" << std::endl;
         }
-        generate(argc, argv);
+        generate(argv);
+    }
+
+    else if (strcmp(argv[1], "test") == 0){
+        if (strcmp(argv[2], "1") == 0){
+            long max_open_file;
+            if (strcmp(argv[3],"max") == 0){
+                max_open_file = sysconf(_SC_OPEN_MAX);
+            }
+            else{
+                max_open_file = atoi(argv[3]);
+            }
+            vector<AbstractInputstream*> isVector;
+            for (int i = 0; i < max_open_file; ++i){
+                InputStream1* is = new InputStream1();
+                isVector.push_back(is);
+            }
+            benchmarkStream1(isVector);
+        }
+        if (strcmp(argv[2], "2") == 0){
+            long max_open_file;
+            if (strcmp(argv[3],"max") == 0){
+                max_open_file = sysconf(_SC_OPEN_MAX);
+            }
+            else{
+                max_open_file = atoi(argv[3]);
+            }
+            vector<AbstractInputstream*> isVector;
+            for (int i = 0; i < max_open_file; ++i){
+                InputStream2* is = new InputStream2();
+                isVector.push_back(is);
+            }
+            benchmarkStream1(isVector);
+        }
+
+
     }
 
     return EXIT_SUCCESS;
