@@ -24,8 +24,6 @@ public:
     int_least32_t read_next() override;
     bool end_of_stream() override;
     void close() override;
-private:
-    void fillBuffer();
 };
 
 template <size_t _bufferSize>
