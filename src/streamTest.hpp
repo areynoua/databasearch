@@ -2,7 +2,15 @@
 #define __STREAMTEST_HPP__
 
 
-void benchmarkStream1(vector<AbstractInputstream*> isVector);
+inline int_least32_t rand32();
+
+void generate(char ** argv);
+
+
+void benchmarkInputStream(vector<AbstractInputstream*> isVector);
+
+void benchmarkOutputStream(vector<AbstractOutputstream*> osVector, int min, int max);
+
 
 
 
