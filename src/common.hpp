@@ -9,42 +9,44 @@
 #include <exception>
 #include <cstring>
 #include <cerrno>
+#include <string>
 
-class FileOpenException : public std::exception {
+class FileException : public std::exception {
+protected:
     int _errno;
-public:
-    virtual ~FileOpenException() = default;
+    std::string _msg;
 
-    FileOpenException(int const errcode) : _errno(errcode) {}
-    virtual const char* what() const noexcept { return std::strerror(_errno); }
+public:
+    virtual ~FileException() = default;
+
+    FileException(int const errcode, std::string msg = std::string()) : _errno(errcode), _msg(msg) {}
+
+    virtual const char* what() const noexcept {
+        std::string msg(std::strerror(_errno));
+        if (! _msg.empty()) {
+            msg.push_back('\n');
+            msg.append(_msg);
+        }
+        return msg.c_str();
+    }
 };
 
-class FileReadException : public std::exception {
-    int _errno;
-public:
-    virtual ~FileReadException() = default;
-
-    FileReadException(int const errcode) : _errno(errcode) {}
-    virtual const char* what() const noexcept { return std::strerror(_errno); }
+class FileOpenException : public FileException {
+    using FileException::FileException;
 };
 
-class FileWriteException : public std::exception {
-    int _errno;
-public:
-    virtual ~FileWriteException() = default;
-
-    FileWriteException(int const errcode) : _errno(errcode) {}
-    virtual const char* what() const noexcept { return std::strerror(_errno); }
+class FileReadException : public FileException {
+    using FileException::FileException;
 };
 
-class FileCloseException : public std::exception {
-    int _errno;
-public:
-    virtual ~FileCloseException() = default;
-
-    FileCloseException(int const errcode) : _errno(errcode) {}
-    virtual const char* what() const noexcept { return std::strerror(_errno); }
+class FileWriteException : public FileException {
+    using FileException::FileException;
 };
+
+class FileCloseException : public FileException {
+    using FileException::FileException;
+};
+
 
 // Bases
 
