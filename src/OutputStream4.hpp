@@ -8,7 +8,7 @@
 class OutputStream4 final : virtual public AbstractOutputstream {
     static const size_t _pageSize;
     static const size_t SIZE = 32 / 8; /* the number of bytes in 1 int32 */
-    int _fd = -1;
+    int _fd = -1; // File descriptor
     char* _map = nullptr; // The address of the mapping
     size_t _fileSize = 0; // The size of the mapped file (in bytes)
     size_t _mapLen = 0; // The size of the mapping (in bytes)
