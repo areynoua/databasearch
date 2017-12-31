@@ -72,12 +72,15 @@ public:
 
 // Utils
 
+#include <cstring>
+
 inline int_least32_t charsToInt32 (const char* const chars) {
     return *(reinterpret_cast<const int32_t* const>(chars));
 }
 
-
-void int32ToChars (char dest[4], const int_least32_t& number);
+inline void int32ToChars (char dest[4], int_least32_t number) {
+    std::memcpy(dest, reinterpret_cast<char*>(&number), 4);
+}
 
 void print_all(AbstractInputstream& is);
 

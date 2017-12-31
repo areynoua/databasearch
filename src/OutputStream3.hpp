@@ -1,14 +1,16 @@
 #ifndef DEF_OUTPUTSTREAM3
 #define DEF_OUTPUTSTREAM3
 
+#include <utility>
+
 #include "common.hpp"
 
 using namespace std;
 
 template <size_t _bufferSize>
 class OutputStream3 final : virtual public AbstractOutputstream {
-private:
-    char _buffer[_bufferSize*4];
+    static const size_t SIZE = 32 / 8;
+    char _buffer[_bufferSize*SIZE];
     int _fd = -1;
     size_t _next = 0;
 public:
@@ -33,6 +35,7 @@ OutputStream3<_bufferSize>::~OutputStream3() {
 
 template <size_t _bufferSize>
 void OutputStream3<_bufferSize>::create(const char* const filename) {
+    close();
     _fd = ::open(filename, O_WRONLY|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
     // TODO: we should try with and without the O_DIRECT flag
     //       (described in open(2)).
@@ -43,13 +46,13 @@ void OutputStream3<_bufferSize>::create(const char* const filename) {
 
 
 template <size_t _bufferSize>
-void OutputStream3<_bufferSize>::write(int number) {
-    int32ToChars(&(_buffer[_next]), number);
-    _next += 4;
-    if (_next == _bufferSize*4) {
-        ssize_t written_size = ::write(_fd,_buffer,_bufferSize*4);
+void OutputStream3<_bufferSize>::write(int_least32_t number) {
+    int32ToChars(&(_buffer[_next]), std::move(number));
+    _next += SIZE;
+    if (_next == _bufferSize*SIZE) {
+        ssize_t written_size = ::write(_fd,_buffer,_bufferSize*SIZE);
         _next = 0;
-        if (written_size != _bufferSize*4) {
+        if (written_size != _bufferSize*SIZE) {
             if (written_size >= 0) {
                 error(0, 0, "Write interrupted after %ld bytes", written_size);
             }

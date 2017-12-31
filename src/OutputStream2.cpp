@@ -5,10 +5,11 @@
 
 OutputStream2::~OutputStream2() {
     close();
-    delete file_pointer;
+    // delete file_pointer;
 }
 
 void OutputStream2::create(const char* const filename) {
+    close();
     file_pointer = fopen(filename, "w");
     if (file_pointer == nullptr) {
         throw FileOpenException(errno);

@@ -33,6 +33,7 @@ InputStream3<_bufferSize>::~InputStream3() {
 
 template <size_t _bufferSize>
 void InputStream3<_bufferSize>::open(const char* const pathname) {
+    close();
     _fd = ::open(pathname, O_RDONLY | O_LARGEFILE);
     if (_fd < 0) {
         throw FileOpenException(errno);

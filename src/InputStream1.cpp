@@ -10,6 +10,7 @@ InputStream1::~InputStream1() {
 }
 
 void InputStream1::open(const char* const filename) {
+    close();
     fd = ::open(filename, O_RDONLY | O_LARGEFILE);
     if (fd < 0) {
         throw FileOpenException(errno);

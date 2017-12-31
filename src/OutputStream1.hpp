@@ -6,7 +6,7 @@
 using namespace std;
 
 class OutputStream1 final : virtual public AbstractOutputstream {
-private:
+    static const size_t SIZE;
     int fd;
 public:
     OutputStream1(): fd(-1) {}

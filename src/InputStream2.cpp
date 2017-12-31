@@ -6,7 +6,6 @@
 
 InputStream2::~InputStream2() {
     close();
-    delete file_pointer;
 }
 
 void InputStream2::open(const char* const filename) {
@@ -37,7 +36,7 @@ int_least32_t InputStream2::read_next() {
 }
 
 bool InputStream2::end_of_stream() {
-    return feof(file_pointer);
+    return file_pointer == nullptr || feof(file_pointer);
 }
 
 void InputStream2::close() {

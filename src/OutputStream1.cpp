@@ -7,11 +7,14 @@
 
 using namespace std;
 
+const size_t OutputStream1::SIZE = 32 / 8;
+
 OutputStream1::~OutputStream1() {
     close();
 }
 
 void OutputStream1::create(const char* const filename) {
+    close();
     fd = ::open(filename, O_WRONLY|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
     // TODO: we should try with and without the O_DIRECT flag
     //       (described in open(2)).
@@ -22,12 +25,10 @@ void OutputStream1::create(const char* const filename) {
 }
 
 
-void OutputStream1::write(int number) {
-    char buffer[4] {0};
-    int32ToChars(buffer, number);
-    ssize_t written_size(::write(fd, buffer, sizeof(buffer)));
+void OutputStream1::write(int_least32_t number) {
+    ssize_t written_size(::write(fd, reinterpret_cast<char*>(&number), SIZE));
 
-    if (written_size != 4) {
+    if (written_size != SIZE) {
         if (written_size >= 0) {
             error(0, 0, "Write interrupted after %ld bytes", written_size);
         }
