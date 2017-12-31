@@ -71,6 +71,7 @@ void OutputStream3<_bufferSize>::close() {
         }
         if (::close(_fd) == 0) {
             _fd = -1;
+            _next = 0;
         }
         else {
             throw FileCloseException(errno);
