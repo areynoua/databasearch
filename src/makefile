@@ -58,18 +58,22 @@ sorted.123:
 test1.out: streams data
 	./streams 1
 	@diff -q data test1.out
+	@diff -q random.65536 random.cpy
 
 test2.out: streams data
 	./streams 2
 	@diff -q data test2.out
+	@diff -q random.65536 random.cpy
 
 test3.out: streams data
 	./streams 3
 	@diff -q data test3.out
+	@diff -q random.65536 random.cpy
 
 test4.out: streams data
 	./streams 4
 	@diff -q data test4.out
+	@diff -q random.65536 random.cpy
 
 test-merge: streams sorted.1 sorted.2 sorted.3 sorted.123
 	./streams merge 1

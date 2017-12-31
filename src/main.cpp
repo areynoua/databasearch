@@ -27,6 +27,7 @@
  * 1. Use `os` to write a file identical to the 'data' file (from hard-coded content)
  * 2. Use `is` to read the 'data' binary file (check with hard-coded content)
  * 3. Use `is` to read the data written by `os` (and check with the hard-coded content)
+ * 4. Use `os` and `is` to create a copy of "random.65536"
  *
  * The file written is named `desc` + ".out"
  */
@@ -93,6 +94,15 @@ void testStreams(AbstractOutputstream & os, AbstractInputstream & is, const char
 
         is.close();
     }
+
+    // 4. open on another file
+    is.open("random.65536");
+    os.create("random.cpy");
+    while (! is.end_of_stream()) {
+        os.write(is.read_next());
+    }
+    os.close();
+    is.close();
 }
 
 /** TODO */
