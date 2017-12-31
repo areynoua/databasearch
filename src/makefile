@@ -68,7 +68,8 @@ test3.out: streams data
 	@diff -q data test3.out
 
 test4.out: streams data
-	@echo "/!\ test for memory mapping to do"
+	./streams 4
+	@diff -q data test4.out
 
 test-merge: streams sorted.1 sorted.2 sorted.3 sorted.123
 	./streams merge 1

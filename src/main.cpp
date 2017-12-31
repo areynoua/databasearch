@@ -9,13 +9,14 @@
 
 #include <vector>
 
-//#include "memoryMapping.hpp"
 #include "InputStream1.hpp"
 #include "OutputStream1.hpp"
 #include "InputStream2.hpp"
 #include "OutputStream2.hpp"
 #include "InputStream3.hpp"
 #include "OutputStream3.hpp"
+#include "InputStream4.hpp"
+#include "OutputStream4.hpp"
 #include "merge.hpp"
 #include "streamTest.hpp"
 
@@ -191,16 +192,11 @@ int main(int argc, char* argv[]) {
         InputStream3<4> is;
         testStreams(os, is, "test3");
     }
-    /*else {
-        // TESTING MEMORY_MAPPING, IMPLEMENTATION 4
-        char *data;
-        char* filename = argv[1];
-        //MemoryMapping mmap = MemoryMapping(filename, 16);
-        MemoryMapping mmap = MemoryMapping(filename);
-        //data = mmap.writeFile();
-        data = mmap.read_file();
+    else if (strcmp(argv[1], "4") == 0) {
+        OutputStream4 os(4);
+        InputStream4 is(4);
+        testStreams(os, is, "test4");
     }
-    */
     else if (strcmp(argv[1], "merge") == 0) {
         if (argc < 3) {
             std::cerr << "How many streams ?" << std::endl;
