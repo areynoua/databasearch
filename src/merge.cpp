@@ -7,8 +7,6 @@
 
 #include "merge.hpp"
 
-//using namespace std;
-
 /**
  * Merge isc sorted Input Streams in in one Output Stream.
  * isc: (input streams count) the number of streams to merge (must be the size of isv)
@@ -44,37 +42,6 @@ void merge(size_t isc, AbstractInputstream * isv[], AbstractOutputstream & os) {
             heap.push(std::pair<int_least32_t, AbstractInputstream*>(least.second->read_next(), least.second));
         }
     }
-
-
-
-/*
-    // we will keep the empty streams at the end of the array
-    size_t nonempty_isc = isc;
-    for (size_t i = 0; i < nonempty_isc; ++i) {
-        if (isv[i]->end_of_stream()) {
-            std::swap<AbstractInputstream*>(isv[i], isv[--nonempty_isc]);
-            --i; // because we do not know if the one we swapped with is empty
-        }
-    }
-
-    // Initialise a priority queue used to store the first (i.e. smallest) item of each
-    // input stream in increasing order (i.e. top is the smallest element).
-    // We need to keep track of the origin stream of each element.
-    std::priority_queue<
-        std::pair<int_least32_t, AbstractInputstream*>,
-        std::vector<std::pair<int_least32_t, AbstractInputstream*> >,
-        std::greater<std::pair<int_least32_t, AbstractInputstream*> >
-    > heap;
-
-    for (size_t i = 0; i < nonempty_isc; ++i) {
-        heap.push(std::pair<int_least32_t, AbstractInputstream*>(isv[i]->read_next(), isv[i]));
-        if (isv[i]->end_of_stream()) {
-            std::swap<AbstractInputstream*>(isv[i], isv[--nonempty_isc]);
-            --i;
-        }
-    }
-
-    */
 }
 
 /*
