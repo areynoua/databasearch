@@ -1,0 +1,49 @@
+# Binaries
+streams
+
+# Data files
+data files/data.*
+
+# Output data files
+output data/od.*
+
+# Sorted files
+sorted.1
+sorted.12
+sorted.123
+sorted.2
+sorted.3
+
+# Prerequisites
+*.d
+*.d.[0-9]*
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
