@@ -96,6 +96,12 @@ clean:
 
 cleanall: clean
 	rm -f *~ *.default
+	rm -f */*~ */*.default
+	rm -f *.d.*
+
+mrproper: clean cleanall
+	rm -f *.d
+	#rm `git ls-files -i --exclude-from=.gitignore`
 
 .PHONY: random test clean cleanall test-merge test-streams
 
