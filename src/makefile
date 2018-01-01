@@ -5,12 +5,27 @@ DEPS = $(wildcard *.hpp)
 OBJS = $(subst .cpp,.o,${SRCS})
 CXXFLAGS = -std=c++11 -ggdb3 -Wpedantic -Wall -Wextra -Wconversion -Weffc++ -Wstrict-null-sentinel -Wold-style-cast -Wnoexcept -Wctor-dtor-privacy -Woverloaded-virtual -Wsign-promo -Wzero-as-null-pointer-constant
 
+# Binaries
+streams: main.cc ${OBJS}
+	@echo compile $@
+	$(CXX) ${CXXFLAGS} -o $@ $^
 
-# Compile
-streams: ${OBJS}
-	$(CXX) ${CXXFLAGS} -o $@ ${OBJS}
+tests/generate_testdata: tests/generate_testdata.cpp ${OBJS}
+	@echo compile $@
+	$(CXX) ${CXXFLAGS} -o $@ $^
 
-# dependences
+tests/tests: ${OBJS} tests/test_streams.cpp tests/testdata.hpp tests/run_all_stream_tests.cpp
+	@echo compile $@
+	$(CXX) ${CXXFLAGS} -o $@ $^
+
+
+# Dependences
+tests/testdata.hpp tests/testdata.bin : tests/generate_testdata
+	tests/generate_testdata
+
+tests/run_all_stream_tests.hpp tests/run_all_stream_tests.cpp: tests/generate_run_all_stream_tests.py
+	cd tests && python3 generate_run_all_stream_tests.py && cd ..
+
 %.d: %.cpp
 	@set -e; rm -f $@; \
 		$(CXX) -MM ${CXXFLAGS} $< > $@.$$$$; \
@@ -18,6 +33,11 @@ streams: ${OBJS}
 		rm -f $@.$$$$
 
 include $(SRCS:.cpp=.d)
+
+
+# Perform tests
+test-streams: tests/tests tests/testdata.bin
+	tests/tests
 
 
 # Run tests
@@ -75,6 +95,26 @@ test4.out: streams data
 	@diff -q data test4.out
 	@diff -q random.65536 random.cpy
 
+test23.out: streams data
+	./streams 23
+	@diff -q data test23.out
+	@diff -q random.65536 random.cpy
+
+test32.out: streams data
+	./streams 32
+	@diff -q data test32.out
+	@diff -q random.65536 random.cpy
+
+test24.out: streams data
+	./streams 24
+	@diff -q data test24.out
+	@diff -q random.65536 random.cpy
+
+test42.out: streams data
+	./streams 42
+	@diff -q data test42.out
+	@diff -q random.65536 random.cpy
+
 test-merge: streams sorted.1 sorted.2 sorted.3 sorted.123
 	./streams merge 1
 	@diff -q sorted.1 merge.out
@@ -108,7 +148,7 @@ clean:
 cleanall: clean
 	rm -f *~ *.default
 
-.PHONY: random test clean cleanall test-merge
+.PHONY: random test clean cleanall test-merge test-streams
 
 
 ## compile streams

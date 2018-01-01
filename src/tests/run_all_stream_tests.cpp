@@ -1,0 +1,115 @@
+#include "run_all_stream_tests.hpp"
+
+#include "../InputStream1.hpp"
+#include "../OutputStream1.hpp"
+#include "../InputStream2.hpp"
+#include "../OutputStream2.hpp"
+#include "../InputStream3.hpp"
+#include "../OutputStream3.hpp"
+#include "../InputStream4.hpp"
+#include "../OutputStream4.hpp"
+
+#include "test_streams.hpp"
+
+void run_all_stream_tests() {
+    metaTestStreams<OutputStream1, InputStream1>("test1.1");
+    metaTestStreams<OutputStream1, InputStream2>("test1.2");
+    metaTestStreams<OutputStream1, InputStream3<2>>("test1.3-2");
+    metaTestStreams<OutputStream1, InputStream3<4>>("test1.3-4");
+    metaTestStreams<OutputStream1, InputStream3<16>>("test1.3-16");
+    metaTestStreams<OutputStream1, InputStream3<256>>("test1.3-256");
+    metaTestStreams<OutputStream1, InputStream3<65536>>("test1.3-65536");
+    metaTestStreams<OutputStream1, InputStream4<1>>("test1.4-1");
+    metaTestStreams<OutputStream1, InputStream4<2>>("test1.4-2");
+    metaTestStreams<OutputStream1, InputStream4<4>>("test1.4-4");
+    metaTestStreams<OutputStream2, InputStream1>("test2.1");
+    metaTestStreams<OutputStream2, InputStream2>("test2.2");
+    metaTestStreams<OutputStream2, InputStream3<2>>("test2.3-2");
+    metaTestStreams<OutputStream2, InputStream3<4>>("test2.3-4");
+    metaTestStreams<OutputStream2, InputStream3<16>>("test2.3-16");
+    metaTestStreams<OutputStream2, InputStream3<256>>("test2.3-256");
+    metaTestStreams<OutputStream2, InputStream3<65536>>("test2.3-65536");
+    metaTestStreams<OutputStream2, InputStream4<1>>("test2.4-1");
+    metaTestStreams<OutputStream2, InputStream4<2>>("test2.4-2");
+    metaTestStreams<OutputStream2, InputStream4<4>>("test2.4-4");
+    metaTestStreams<OutputStream3<2>, InputStream1>("test3-2.1");
+    metaTestStreams<OutputStream3<4>, InputStream1>("test3-4.1");
+    metaTestStreams<OutputStream3<16>, InputStream1>("test3-16.1");
+    metaTestStreams<OutputStream3<256>, InputStream1>("test3-256.1");
+    metaTestStreams<OutputStream3<65536>, InputStream1>("test3-65536.1");
+    metaTestStreams<OutputStream3<2>, InputStream2>("test3-2.2");
+    metaTestStreams<OutputStream3<4>, InputStream2>("test3-4.2");
+    metaTestStreams<OutputStream3<16>, InputStream2>("test3-16.2");
+    metaTestStreams<OutputStream3<256>, InputStream2>("test3-256.2");
+    metaTestStreams<OutputStream3<65536>, InputStream2>("test3-65536.2");
+    metaTestStreams<OutputStream3<2>, InputStream3<2>>("test3-2.3-2");
+    metaTestStreams<OutputStream3<2>, InputStream3<4>>("test3-2.3-4");
+    metaTestStreams<OutputStream3<2>, InputStream3<16>>("test3-2.3-16");
+    metaTestStreams<OutputStream3<2>, InputStream3<256>>("test3-2.3-256");
+    metaTestStreams<OutputStream3<2>, InputStream3<65536>>("test3-2.3-65536");
+    metaTestStreams<OutputStream3<4>, InputStream3<2>>("test3-4.3-2");
+    metaTestStreams<OutputStream3<4>, InputStream3<4>>("test3-4.3-4");
+    metaTestStreams<OutputStream3<4>, InputStream3<16>>("test3-4.3-16");
+    metaTestStreams<OutputStream3<4>, InputStream3<256>>("test3-4.3-256");
+    metaTestStreams<OutputStream3<4>, InputStream3<65536>>("test3-4.3-65536");
+    metaTestStreams<OutputStream3<16>, InputStream3<2>>("test3-16.3-2");
+    metaTestStreams<OutputStream3<16>, InputStream3<4>>("test3-16.3-4");
+    metaTestStreams<OutputStream3<16>, InputStream3<16>>("test3-16.3-16");
+    metaTestStreams<OutputStream3<16>, InputStream3<256>>("test3-16.3-256");
+    metaTestStreams<OutputStream3<16>, InputStream3<65536>>("test3-16.3-65536");
+    metaTestStreams<OutputStream3<256>, InputStream3<2>>("test3-256.3-2");
+    metaTestStreams<OutputStream3<256>, InputStream3<4>>("test3-256.3-4");
+    metaTestStreams<OutputStream3<256>, InputStream3<16>>("test3-256.3-16");
+    metaTestStreams<OutputStream3<256>, InputStream3<256>>("test3-256.3-256");
+    metaTestStreams<OutputStream3<256>, InputStream3<65536>>("test3-256.3-65536");
+    metaTestStreams<OutputStream3<65536>, InputStream3<2>>("test3-65536.3-2");
+    metaTestStreams<OutputStream3<65536>, InputStream3<4>>("test3-65536.3-4");
+    metaTestStreams<OutputStream3<65536>, InputStream3<16>>("test3-65536.3-16");
+    metaTestStreams<OutputStream3<65536>, InputStream3<256>>("test3-65536.3-256");
+    metaTestStreams<OutputStream3<65536>, InputStream3<65536>>("test3-65536.3-65536");
+    metaTestStreams<OutputStream3<2>, InputStream4<1>>("test3-2.4-1");
+    metaTestStreams<OutputStream3<2>, InputStream4<2>>("test3-2.4-2");
+    metaTestStreams<OutputStream3<2>, InputStream4<4>>("test3-2.4-4");
+    metaTestStreams<OutputStream3<4>, InputStream4<1>>("test3-4.4-1");
+    metaTestStreams<OutputStream3<4>, InputStream4<2>>("test3-4.4-2");
+    metaTestStreams<OutputStream3<4>, InputStream4<4>>("test3-4.4-4");
+    metaTestStreams<OutputStream3<16>, InputStream4<1>>("test3-16.4-1");
+    metaTestStreams<OutputStream3<16>, InputStream4<2>>("test3-16.4-2");
+    metaTestStreams<OutputStream3<16>, InputStream4<4>>("test3-16.4-4");
+    metaTestStreams<OutputStream3<256>, InputStream4<1>>("test3-256.4-1");
+    metaTestStreams<OutputStream3<256>, InputStream4<2>>("test3-256.4-2");
+    metaTestStreams<OutputStream3<256>, InputStream4<4>>("test3-256.4-4");
+    metaTestStreams<OutputStream3<65536>, InputStream4<1>>("test3-65536.4-1");
+    metaTestStreams<OutputStream3<65536>, InputStream4<2>>("test3-65536.4-2");
+    metaTestStreams<OutputStream3<65536>, InputStream4<4>>("test3-65536.4-4");
+    metaTestStreams<OutputStream4<1>, InputStream1>("test4-1.1");
+    metaTestStreams<OutputStream4<2>, InputStream1>("test4-2.1");
+    metaTestStreams<OutputStream4<4>, InputStream1>("test4-4.1");
+    metaTestStreams<OutputStream4<1>, InputStream2>("test4-1.2");
+    metaTestStreams<OutputStream4<2>, InputStream2>("test4-2.2");
+    metaTestStreams<OutputStream4<4>, InputStream2>("test4-4.2");
+    metaTestStreams<OutputStream4<1>, InputStream3<2>>("test4-1.3-2");
+    metaTestStreams<OutputStream4<1>, InputStream3<4>>("test4-1.3-4");
+    metaTestStreams<OutputStream4<1>, InputStream3<16>>("test4-1.3-16");
+    metaTestStreams<OutputStream4<1>, InputStream3<256>>("test4-1.3-256");
+    metaTestStreams<OutputStream4<1>, InputStream3<65536>>("test4-1.3-65536");
+    metaTestStreams<OutputStream4<2>, InputStream3<2>>("test4-2.3-2");
+    metaTestStreams<OutputStream4<2>, InputStream3<4>>("test4-2.3-4");
+    metaTestStreams<OutputStream4<2>, InputStream3<16>>("test4-2.3-16");
+    metaTestStreams<OutputStream4<2>, InputStream3<256>>("test4-2.3-256");
+    metaTestStreams<OutputStream4<2>, InputStream3<65536>>("test4-2.3-65536");
+    metaTestStreams<OutputStream4<4>, InputStream3<2>>("test4-4.3-2");
+    metaTestStreams<OutputStream4<4>, InputStream3<4>>("test4-4.3-4");
+    metaTestStreams<OutputStream4<4>, InputStream3<16>>("test4-4.3-16");
+    metaTestStreams<OutputStream4<4>, InputStream3<256>>("test4-4.3-256");
+    metaTestStreams<OutputStream4<4>, InputStream3<65536>>("test4-4.3-65536");
+    metaTestStreams<OutputStream4<1>, InputStream4<1>>("test4-1.4-1");
+    metaTestStreams<OutputStream4<1>, InputStream4<2>>("test4-1.4-2");
+    metaTestStreams<OutputStream4<1>, InputStream4<4>>("test4-1.4-4");
+    metaTestStreams<OutputStream4<2>, InputStream4<1>>("test4-2.4-1");
+    metaTestStreams<OutputStream4<2>, InputStream4<2>>("test4-2.4-2");
+    metaTestStreams<OutputStream4<2>, InputStream4<4>>("test4-2.4-4");
+    metaTestStreams<OutputStream4<4>, InputStream4<1>>("test4-4.4-1");
+    metaTestStreams<OutputStream4<4>, InputStream4<2>>("test4-4.4-2");
+    metaTestStreams<OutputStream4<4>, InputStream4<4>>("test4-4.4-4");
+}

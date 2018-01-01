@@ -21,90 +21,6 @@
 #include "streamTest.hpp"
 
 
-
-/**
- * Test `os` and `is`, `desc` is a short description included in report messages
- * 1. Use `os` to write a file identical to the 'data' file (from hard-coded content)
- * 2. Use `is` to read the 'data' binary file (check with hard-coded content)
- * 3. Use `is` to read the data written by `os` (and check with the hard-coded content)
- * 4. Use `os` and `is` to create a copy of "random.65536"
- *
- * The file written is named `desc` + ".out"
- */
-void testStreams(AbstractOutputstream & os, AbstractInputstream & is, const char* const desc) {
-    // reference
-    const char DATA_FILENAME[]{"data files/data"};
-    const size_t DATA_SIZE(5);
-    const int_least32_t DATA_CONTENT[DATA_SIZE]{97, 65, 16843009, 65537, -3};
-
-    // out
-    const char OUT_EXT[]{".out"};
-    char * out_filename = new char[strlen(desc) + strlen(OUT_EXT) + 1];
-    strcpy(out_filename, desc);
-    strcat(out_filename, OUT_EXT);
-
-    // in
-    const size_t IN_FILES(2);
-    const char * const IN_FILENAMES[2]{DATA_FILENAME, out_filename};
-
-    // 1. Use `os` write a file identical to the 'data' file (from hard-coded content)
-    std::cout << "BEGIN: Test output " << desc << " to   " << out_filename << "." << std::endl;
-    /* This does not check the data written. Execute
-     *     diff DATA_FILENAME out_filename
-     * or
-     *     vimdiff DATA_FILENAME out_filename
-     * to check it (see makefile).
-     */
-
-    os.create(out_filename);
-    for (size_t i = 0; i < DATA_SIZE; ++i) {
-        os.write(DATA_CONTENT[i]);
-    }
-    os.close();
-
-    std::cout << "END  : Test output " << desc << " to   " << out_filename << ".\n" << std::endl;
-
-    // 2. Use `is` to read the 'data' binary file (check with hard-coded content)
-    // 3. Use `is` to read the data written by `os` (and check with the hard-coded content)
-    for (size_t f = 0; f < IN_FILES; ++f) {
-        const char * const in_filename = IN_FILENAMES[f];
-        std::cout << "BEGIN: Test input  " << desc << " from " << in_filename << "." << std::endl;
-
-        is.open(in_filename);
-        size_t i = 0;
-        while (!is.end_of_stream() && i < DATA_SIZE) {
-            int_least32_t read = is.read_next();
-            if (DATA_CONTENT[i] != read) {
-                std::cerr << "       " << i << ": "
-                    << std::setw(10) << DATA_CONTENT[i] << " expected but " << std::setw(10) << read << " found."
-                    << std::endl;
-            }
-            ++i;
-        }
-        if (i != DATA_SIZE) {
-            std::cerr << "       Did not stop at the end (at " << i << " instead of " << DATA_SIZE << ")" << std::endl;
-        }
-        while (!is.end_of_stream()) {
-            int_least32_t read = is.read_next();
-            std::cerr << "       " << i << ": " << std::setw(10) << read << " found." << std::endl;
-            ++i;
-        }
-
-        std::cout << "END  : Test input  " << desc << " from " << in_filename << ".\n" << std::endl;
-
-        is.close();
-    }
-
-    // 4. open on another file
-    is.open("random.65536");
-    os.create("random.cpy");
-    while (! is.end_of_stream()) {
-        os.write(is.read_next());
-    }
-    os.close();
-    is.close();
-}
-
 /** TODO */
 void testMerge(size_t isc, AbstractInputstream * isv[], AbstractOutputstream & os) {
     char in_filename[9];
@@ -126,26 +42,6 @@ int main(int argc, char* argv[]) {
     if (argc < 2) {
         std::cerr << "Need argument" << std::endl;
         exit(EXIT_FAILURE);
-    }
-    else if (strcmp(argv[1], "1") == 0) {
-        OutputStream1 os;
-        InputStream1 is;
-        testStreams(os, is, "test1");
-    }
-    else if (strcmp(argv[1], "2") == 0) {
-        OutputStream2 os;
-        InputStream2 is;
-        testStreams(os, is, "test2");
-    }
-    else if (strcmp(argv[1], "3") == 0) {
-        OutputStream3<4> os;
-        InputStream3<4> is;
-        testStreams(os, is, "test3");
-    }
-    else if (strcmp(argv[1], "4") == 0) {
-        OutputStream4 os(4);
-        InputStream4 is(4);
-        testStreams(os, is, "test4");
     }
     else if (strcmp(argv[1], "merge") == 0) {
         if (argc < 3) {
