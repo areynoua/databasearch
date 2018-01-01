@@ -112,6 +112,7 @@ void benchmarkOutputStream(vector<AbstractOutputstream*> osVector, int min, int 
         char str[10];
         sprintf(str, "%d", i);
         os->create(strcat(DATA_FILENAME,str));
+        std::srand(static_cast<unsigned>(i));
         quantityVector.push_back(rand()%(max-min)+min);
     }
     int j = 1;

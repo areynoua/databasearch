@@ -246,6 +246,12 @@ int main(int argc, char* argv[]) {
                 }
             }
         }
+        else if (strcmp(argv[2], "4") == 0){
+            for (int i = 0; i < max_open_file; ++i){
+                InputStream4* is = new InputStream4(atoi(argv[4]));
+                isVector.push_back(is);
+            }
+        }
         benchmarkInputStream(isVector);
     }
     // output [1-4 ][nbFiles] [minQuantity] [maxQuantity]
@@ -317,6 +323,13 @@ int main(int argc, char* argv[]) {
                 else {
                     cout << "choose 2, 4, 8, 16, 256, 512, 1024, 2048 or 4096" << endl;
                 }
+            }
+        }
+
+        if (strcmp(argv[2], "4") == 0){
+            for (int i = 0; i < max_open_file; ++i){
+                OutputStream4* os = new OutputStream4(atoi(argv[6]));
+                osVector.push_back(os);
             }
         }
 
