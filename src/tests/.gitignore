@@ -1,6 +1,13 @@
+# generated binaries
 generate_testdata
-test_streams
+tests
+
+# generated dependences
 run_all_stream_tests.hpp
-testdata.bin
+run_all_stream_tests.cpp
 testdata.hpp
+
+# other generated files
 testdata.txt
+testdata.bin
+random.*
