@@ -30,7 +30,7 @@ int_least32_t InputStream1::read_next() {
     }
     else {
         if (read_size > 0) {
-            error(0, 0, "Last %ld bytes ignored (4 bytes expected)", read_size);
+            error(0, 0, "Last %ld bytes ignored (%ld bytes expected)", read_size, SIZE);
         }
         else if (read_size < 0) {
             throw FileReadException(errno);

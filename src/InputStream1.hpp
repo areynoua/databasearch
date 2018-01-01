@@ -3,8 +3,6 @@
 
 #include "common.hpp"
 
-using namespace std;
-
 /**
  * Stream on 32 bits without buffer
  * has a "buffer" of 4 bytes

@@ -3,8 +3,6 @@
 
 #include "common.hpp"
 
-using namespace std;
-
 class InputStream2 final : virtual public AbstractInputstream {
 private:
     static const size_t SIZE = 32 / 8; // 32 bits
