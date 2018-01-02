@@ -92,6 +92,7 @@ void benchmarkInputStream(AbstractInputstream ** isVector, size_t vectorSize){
                 std::swap(isVector[i], isVector[vectorSize]);
                 is->close();
                 delete is;
+                --i;
             }
         }
     }

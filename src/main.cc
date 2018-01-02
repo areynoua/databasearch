@@ -176,7 +176,24 @@ int main(int argc, char* argv[]) {
         generate(argv);
     }
 
-    // input <impl> [nbFiles] <impl-param>
+    // input <impl> [ <nbFiles> [ <impl-param> ] ]
+    // <impl>: 1 | 2 | 3 | 4
+    // <nbFile>: number. Defaults to max supported or 30 if 30 is smaller.
+    // <impl-param>: the size of the impl3 buffer or the number of page mapped by impl4.
+    //      must be a power of 2 (implementation is generic, but as the instanciation is static
+    //      we restricted the possible values).
+    //
+    // with impl = 1 or impl = 2, impl-param is ignored
+    // if impl = 3 or impl = 4, impl-param is required (and so is nbFiles)
+    // ex:
+    //  input 1
+    //  input 1 0
+    //  input 1 max
+    //      read simultaneously the maximum number of file supported with impl 1
+    //  input 2 3
+    //      read simultaneously 3 files with impl 2
+    //  input 3 - 256
+    //      read simultaneously the maximum number of file supported with impl 3 with a buffer of 256 int32
     else if (strcmp(argv[1], "input") == 0){
         const int IMPL = 2;
         const int NB_FILES = 3;
@@ -189,9 +206,6 @@ int main(int argc, char* argv[]) {
         if (max_open_file < 1 || 30 < max_open_file) {
             max_open_file = 30;
         }
-        else {
-            max_open_file = atoi(argv[NB_FILES]);
-        }
 
         char * impl_param = new char[10];
         impl_param[0] = '\x0';
@@ -202,6 +216,8 @@ int main(int argc, char* argv[]) {
         AbstractInputstream ** isVector;
         isVector = InputStreamFactory(argv[IMPL], impl_param, max_open_file);
         benchmarkInputStream(isVector, max_open_file);
+
+        delete[] isVector;
     }
     // output [1-4 ][nbFiles] [minQuantity] [maxQuantity]
     else if (strcmp(argv[1],"output") == 0){
