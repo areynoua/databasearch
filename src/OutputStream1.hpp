@@ -13,7 +13,7 @@ public:
     virtual ~OutputStream1();
 
     void create(const char* const) override;
-    void write(int_least32_t elem) override;
+    void write(int32_t elem) override;
     void close() override;
 };
 

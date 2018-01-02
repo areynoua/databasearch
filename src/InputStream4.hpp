@@ -32,7 +32,7 @@ public:
     InputStream4& operator=(const InputStream4&) = delete;
     virtual ~InputStream4();
     void open(const char* const) override;
-    int_least32_t read_next() override;
+    int32_t read_next() override;
     bool end_of_stream() override;
     void close() override;
 
@@ -74,8 +74,8 @@ void InputStream4<PAGEC>::open(const char* const pathname) {
 }
 
 template <int PAGEC>
-int_least32_t InputStream4<PAGEC>::read_next() {
-    int_least32_t value(0);
+int32_t InputStream4<PAGEC>::read_next() {
+    int32_t value(0);
 
     if (_mapoff + _next + SIZE <= _fileSize) { // enough bytes in the file
         if (_next + SIZE > MAPLEN) { // not enough mapped bytes

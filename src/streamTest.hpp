@@ -1,7 +1,7 @@
 #ifndef __STREAMTEST_HPP__
 #define __STREAMTEST_HPP__
 
-inline int_least32_t rand32();
+inline int32_t rand32();
 
 void generate(char ** argv);
 

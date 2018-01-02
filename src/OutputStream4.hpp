@@ -29,7 +29,7 @@ public:
     virtual ~OutputStream4();
 
     void create(const char* const) override;
-    void write(int_least32_t) override;
+    void write(int32_t) override;
     void close() override;
 
 private:
@@ -64,7 +64,7 @@ void OutputStream4<PAGEC>::create(const char* const pathname) {
 }
 
 template <int PAGEC>
-void OutputStream4<PAGEC>::write(int_least32_t number) {
+void OutputStream4<PAGEC>::write(int32_t number) {
     if (_next + SIZE > MAPLEN) {
         mapNext();
     }

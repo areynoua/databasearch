@@ -17,12 +17,12 @@ void InputStream2::open(const char* const filename) {
     read_next();
 }
 
-int_least32_t InputStream2::read_next() {
+int32_t InputStream2::read_next() {
     /* Return the last value read
      * and fill read_value with the next value.
      * This allows to handle end_of_stream conveniently. */
 
-    int_least32_t value(read_value);
+    int32_t value(read_value);
 
     if (read_size != 1) {
         if (ferror(file_pointer)) {

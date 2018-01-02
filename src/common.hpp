@@ -55,7 +55,7 @@ public:
     virtual ~AbstractInputstream() = default;
 
     virtual void open(const char* const infilename) = 0;
-    virtual int_least32_t read_next() = 0;
+    virtual int32_t read_next() = 0;
     virtual bool end_of_stream() = 0;
 
     virtual void close() = 0;
@@ -66,7 +66,7 @@ public:
     virtual ~AbstractOutputstream() = default;
 
     virtual void create(const char* const) = 0;
-    virtual void write (int_least32_t elem) = 0;
+    virtual void write (int32_t elem) = 0;
     virtual void close() = 0;
 };
 
@@ -74,11 +74,11 @@ public:
 
 #include <cstring>
 
-inline int_least32_t charsToInt32 (const char* const chars) {
+inline int32_t charsToInt32 (const char* const chars) {
     return *(reinterpret_cast<const int32_t* const>(chars));
 }
 
-inline void int32ToChars (char dest[4], int_least32_t number) {
+inline void int32ToChars (char dest[4], int32_t number) {
     std::memcpy(dest, reinterpret_cast<char*>(&number), 4);
 }
 

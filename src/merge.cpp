@@ -21,35 +21,35 @@ void merge(size_t isc, AbstractInputstream * isv[], AbstractOutputstream & os) {
     // input stream in increasing order (i.e. top is the smallest element).
     // We need to keep track of the origin stream of each element.
     std::priority_queue<
-        std::pair<int_least32_t, AbstractInputstream*>,
-        std::vector<std::pair<int_least32_t, AbstractInputstream*> >,
-        std::greater<std::pair<int_least32_t, AbstractInputstream*> >
+        std::pair<int32_t, AbstractInputstream*>,
+        std::vector<std::pair<int32_t, AbstractInputstream*> >,
+        std::greater<std::pair<int32_t, AbstractInputstream*> >
     > heap;
 
     for (size_t i = 0; i < isc; ++i) {
         if (!isv[i]->end_of_stream()) {
-            heap.push(std::pair<int_least32_t, AbstractInputstream*>(isv[i]->read_next(), isv[i]));
+            heap.push(std::pair<int32_t, AbstractInputstream*>(isv[i]->read_next(), isv[i]));
         }
     }
 
     // At each iteration, write the smallest element on the output stream and
     // insert the next element of the origin stream in the heap.
     while (!heap.empty()) {
-        std::pair<int_least32_t, AbstractInputstream*> least(heap.top());
+        std::pair<int32_t, AbstractInputstream*> least(heap.top());
         os.write(least.first);
         heap.pop();
         if (!least.second->end_of_stream()) {
-            heap.push(std::pair<int_least32_t, AbstractInputstream*>(least.second->read_next(), least.second));
+            heap.push(std::pair<int32_t, AbstractInputstream*>(least.second->read_next(), least.second));
         }
     }
 }
 
 /*
 // merges arrays of k sub-arrays using a min-heap
-vector<int_least32_t> merge(vector<vector<int_least32_t>>& vect) {
+vector<int32_t> merge(vector<vector<int32_t>>& vect) {
     int k = vect.size();
-    vector<int_least32_t> result;
-    priority_queue<int_least32_t, vector<int_least32_t>, greater<int_least32_t>> heap;
+    vector<int32_t> result;
+    priority_queue<int32_t, vector<int32_t>, greater<int32_t>> heap;
     for (int i = 0; i < k; i++) {
         for (int j = 0; j < vect[i].size(); j++) {
             heap.push(vect[i][j]);
@@ -83,9 +83,9 @@ void dway_merge(AbstractInputstream* is, AbstractOutputstream* os){
     os->close();
 
 
-    vector<vector<int_least32_t>> vect;
+    vector<vector<int32_t>> vect;
     is->open("random.16");
-    vector<int_least32_t> x;
+    vector<int32_t> x;
     while (!is->end_of_stream()){
         x.push_back(is->read_next());
     }
@@ -104,8 +104,8 @@ void dway_merge(AbstractInputstream* is, AbstractOutputstream* os){
     }
 
     cout << "ICI " << endl;
-    vector<int_least32_t> result = merge(vect);
-    for (int_least32_t value: result)
+    vector<int32_t> result = merge(vect);
+    for (int32_t value: result)
         cout << value << " ";
     cout << endl;
 }

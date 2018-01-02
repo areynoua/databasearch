@@ -18,12 +18,12 @@ void InputStream1::open(const char* const filename) {
     read_next(); // fill the buffer
 }
 
-int_least32_t InputStream1::read_next() {
+int32_t InputStream1::read_next() {
     /* Return the value in the buffer when the function is called
      * and fill the buffer for the next value.
      * This allows to handle end_of_stream conveniently. */
 
-    int_least32_t value(0);
+    int32_t value(0);
 
     if (read_size == SIZE) { // OK
         value = charsToInt32(buffer);

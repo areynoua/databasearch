@@ -74,7 +74,7 @@ bool testStreams(AbstractOutputstream & os, AbstractInputstream & is, const char
         is.open(in_filename);
         size_t i = 0;
         while (!is.end_of_stream() && i < TESTDATA_SIZE) {
-            int_least32_t read = is.read_next();
+            int32_t read = is.read_next();
             if (TESTDATA[i] != read) {
                 ok = false;
                 if (!check) {
@@ -93,7 +93,7 @@ bool testStreams(AbstractOutputstream & os, AbstractInputstream & is, const char
         }
         while (!is.end_of_stream()) {
             ok = false;
-            int_least32_t read = is.read_next();
+            int32_t read = is.read_next();
             if (!check) {
                 std::cout << "       " << i << ": " << std::setw(10) << read << " found." << std::endl;
             }

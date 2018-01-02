@@ -18,7 +18,7 @@ public:
     virtual ~InputStream1();
 
     void open(const char* const) override;
-    int_least32_t read_next() override;
+    int32_t read_next() override;
     inline bool end_of_stream() override;
     void close() override;
 };

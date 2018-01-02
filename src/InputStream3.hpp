@@ -1,7 +1,7 @@
 #ifndef DEF_INPUTSTREAM3
 #define DEF_INPUTSTREAM3
 
-#include <cstdint> // int_least32_t
+#include <cstdint> // int32_t
 #include <error.h>
 #include <fcntl.h>
 #include <fstream>
@@ -21,7 +21,7 @@ public:
     InputStream3(){}
     virtual ~InputStream3();
     void open(const char* const) override;
-    int_least32_t read_next() override;
+    int32_t read_next() override;
     bool end_of_stream() override;
     void close() override;
 };
@@ -42,8 +42,8 @@ void InputStream3<_bufferSize>::open(const char* const pathname) {
 }
 
 template <size_t _bufferSize>
-int_least32_t InputStream3<_bufferSize>::read_next() {
-    int_least32_t value(0);
+int32_t InputStream3<_bufferSize>::read_next() {
+    int32_t value(0);
 
     if (_next + SIZE <= _read_size) { // OK: enough bytes to read
         value = charsToInt32(&(_buffer[_next]));

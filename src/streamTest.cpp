@@ -12,7 +12,7 @@ using namespace std;
  * Use std::rand to return a pseudo random number between -2^(31) and 2^(31)-1.
  * note: std::rand return a value between 0 and RAND_MAX with RAND_MAX >= 2^15 - 1
  */
-inline int_least32_t rand32() {
+inline int32_t rand32() {
     char chars[4];
     chars[0] = static_cast<char>(std::rand());
     chars[1] = static_cast<char>(std::rand());
@@ -57,7 +57,7 @@ void generate(char ** argv) {
         os.create(filename);
 //        otxts.open(txtfilename, ios_base::trunc | ios_base::out);
         for (size_t i = 0; i < size; ++i) {
-            int_least32_t value = rand32();
+            int32_t value = rand32();
             os.write(value);
             //otxts << value << "\n";
         }

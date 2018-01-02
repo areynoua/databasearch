@@ -7,7 +7,7 @@ class InputStream2 final : virtual public AbstractInputstream {
 private:
     static const size_t SIZE = 32 / 8; // 32 bits
     FILE *file_pointer;
-    int_least32_t read_value;
+    int32_t read_value;
     ssize_t read_size;
 
 public:
@@ -18,7 +18,7 @@ public:
     virtual ~InputStream2();
 
     void open(const char* const) override;
-    int_least32_t read_next() override;
+    int32_t read_next() override;
     bool end_of_stream() override;
     void close() override;
 };

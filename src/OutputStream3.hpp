@@ -18,7 +18,7 @@ public:
     virtual ~OutputStream3();
 
     void create(const char* const) override;
-    void write(int_least32_t elem) override;
+    void write(int32_t elem) override;
     void close() override;
 };
 
@@ -46,7 +46,7 @@ void OutputStream3<_bufferSize>::create(const char* const filename) {
 
 
 template <size_t _bufferSize>
-void OutputStream3<_bufferSize>::write(int_least32_t number) {
+void OutputStream3<_bufferSize>::write(int32_t number) {
     int32ToChars(&(_buffer[_next]), std::move(number));
     _next += SIZE;
     if (_next == _bufferSize*SIZE) {

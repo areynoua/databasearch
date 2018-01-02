@@ -16,7 +16,7 @@ void OutputStream2::create(const char* const filename) {
     }
 }
 
-void OutputStream2::write(int_least32_t number) {
+void OutputStream2::write(int32_t number) {
     ssize_t written_size(fwrite(&number, 4, 1, file_pointer));
 
     if (written_size != 1) {
