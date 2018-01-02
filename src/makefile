@@ -1,4 +1,5 @@
 CXX = g++
+SHELL = bash
 
 SRCS = $(wildcard *.cpp)
 DEPS = $(wildcard *.hpp)

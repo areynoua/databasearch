@@ -68,39 +68,34 @@ void generate(char ** argv) {
 }
 
 
-
-void benchmarkInputStream(vector<AbstractInputstream*> isVector){
-    int vectorSize = static_cast<int> (isVector.size());
+/**
+ * /!\ this method required that end_of_stream() is false for all the streams.
+ * /!\ this method delete all the streams in isVector, but not the array itself.
+ */
+void benchmarkInputStream(AbstractInputstream ** isVector, size_t vectorSize){
     // We open our K stream based on the quantity of inputstreams
-    for (int i = 0; i < vectorSize; ++i){
+    for (size_t i = 0; i < vectorSize; ++i){
         AbstractInputstream* is = isVector[i];
         char DATA_FILENAME[]{"data files/data."};
         char str[10];
-        sprintf(str, "%d", i);
+        sprintf(str, "%ld", i);
         is->open(strcat(DATA_FILENAME,str));
     }
 
-    while (isVector.size() > 0){
-        vectorSize = static_cast<int>(isVector.size());
-        vector<int> vectorDelete;
-        for (int i = 0; i < vectorSize; ++i){
+    while (vectorSize > 0){
+        for (size_t i = 0; i < vectorSize; ++i){
             AbstractInputstream* is = isVector[i];
             is->read_next();
+
             if (is->end_of_stream()){
-                vectorDelete.push_back(i);
+                --vectorSize;
+                std::swap(isVector[i], isVector[vectorSize]);
+                is->close();
+                delete is;
             }
-        }
-        // close and delete finished stream
-        for (int i = 0; i < static_cast<int> (vectorDelete.size()); ++i){
-            int index = vectorDelete.back()-i;
-            AbstractInputstream* is = isVector[index];
-            is->close();
-            isVector.erase(isVector.begin()+index);
-            delete is;
         }
     }
 }
-
 
 void benchmarkOutputStream(vector<AbstractOutputstream*> osVector, int min, int max){
     int vectorSize = static_cast<int> (osVector.size());
@@ -138,3 +133,4 @@ void benchmarkOutputStream(vector<AbstractOutputstream*> osVector, int min, int 
         j++;
     }
 }
+// vim: set shiftwidth=4 softtabstop=4 :
