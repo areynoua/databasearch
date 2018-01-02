@@ -1,3 +1,4 @@
+#include <stdio.h> // P_tmpdir
 #include <iostream>
 #include <vector>
 #include <queue>
@@ -44,71 +45,83 @@ void merge(size_t isc, AbstractInputstream * isv[], AbstractOutputstream & os) {
     }
 }
 
-/*
-// merges arrays of k sub-arrays using a min-heap
-vector<int32_t> merge(vector<vector<int32_t>>& vect) {
-    int k = vect.size();
-    vector<int32_t> result;
-    priority_queue<int32_t, vector<int32_t>, greater<int32_t>> heap;
-    for (int i = 0; i < k; i++) {
-        for (int j = 0; j < vect[i].size(); j++) {
-            heap.push(vect[i][j]);
-            // this part was used to have a heap of maximal k streams, but seems like it's not working
-            // so we will have a full size and the heap will automatically order our input
-            // TODO Should we change?
-//            if (heap.size() == k) {
-//                result.push_back(heap.top());
-//                heap.pop();
-//            }
+/** return the name of the sorted file */
+template<typename OS, typename IS>
+char * dway_merge(IS & input, size_t memory /* M */, size_t streamsc /* d */) {
+    // 1. Read the input file and split it into ceil(N/M) streams, each of size at most M.
+
+    char * filename_template = new char[40];
+    snprintf(filename_template, 39, "%s/%s", P_tmpdir, "dway_merge.%ld.tmp");
+    char * filename = new char[40];
+
+    OS output;
+
+    // split
+    // written file: d_way_merge.%.d with % in [1, splitsc]
+    size_t splitsc(0);
+    std::priority_queue< int32_t, std::vector<int32_t>, std::greater<int32_t> > heap;
+    while(!input.end_of_stream()) {
+        while (heap.size() < memory && !input.end_of_stream()) {
+            heap.push(std::move(input.read_next()));
+        }
+        if (!heap.empty()) {
+            snprintf(filename, 39, filename_template, ++splitsc);
+            output.create(filename);
+            while (!heap.empty()) {
+                output.write(heap.top());
+                heap.pop();
+            }
+            output.close();
         }
     }
-    while (heap.size()) {
-        result.push_back(heap.top());
-        heap.pop();
-    }
-    return result;
-}
 
+    // 2. Store the references to the ceil(N/M) streams in a queue.
 
-void dway_merge(AbstractInputstream* is, AbstractOutputstream* os){
-    os->create("TestMerge1");
-    for (int i = 0; i <10; ++i){
-        os->write(i*2);
+    std::queue<size_t> queue;
+    for (size_t i = 1; i <= splitsc; ++i) {
+        queue.push(i);
     }
-    os->close();
-    os->create("TestMerge2");
-    for (int i = 0; i <10; ++i){
-        os->write((i*2)+1);
-    }
-    os->close();
 
+    // 3. Repeatedly until only one stream remains, merge the d first streams in the queue, and
+    // put the resulting stream at the end of the queue (if only x < d streams remain in the
+    // queue, merge those).
 
-    vector<vector<int32_t>> vect;
-    is->open("random.16");
-    vector<int32_t> x;
-    while (!is->end_of_stream()){
-        x.push_back(is->read_next());
+    size_t next_file(0);
+    IS * inputs[] = new IS*[streamsc];
+    for (size_t i = 0; i < streamsc; ++i) {
+        inputs[i] = new IS();
     }
-    vect.push_back(x);
-    is->open("random.256");
-    x.clear();
-    while (!is->end_of_stream()){
-        x.push_back(is->read_next());
-    }
-    vect.push_back(x);
-    for (int i = 0; i < vect.size(); ++i){
-        for (int j = 0; j < vect[i].size(); ++j){
-            cout << vect[i][j] << " ";
+    while (queue.size() > 1) {
+        size_t isc = 0;
+        while (isc < streamsc && !queue.empty()) {
+            snprintf(filename, 39, filename_template, queue.front());
+            queue.pop();
+            inputs[isc]->open(filename);
+            ++isc;
         }
-        cout << endl;
+
+        snprintf(filename, 39, filename_template, next_file);
+        output.create(filename);
+        queue.push(next_file);
+        ++next_file;
+
+        merge(isc, inputs, output);
+
+        for (size_t i = 0; i < isc; ++i) {
+            inputs[isc]->close();
+        }
+    }
+    for (size_t i = 0; i < streamsc; ++i) {
+        delete inputs[i];
     }
 
-    cout << "ICI " << endl;
-    vector<int32_t> result = merge(vect);
-    for (int32_t value: result)
-        cout << value << " ";
-    cout << endl;
+    snprintf(filename, 39, filename_template, queue.front());
+    queue.pop();
+
+    delete[] inputs;
+    delete[] filename_template;
+
+    return filename;
 }
-*/
 
 // vim: set shiftwidth=4 softtabstop=4 spell spelllang=en:
