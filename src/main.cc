@@ -199,7 +199,7 @@ int main(int argc, char* argv[]) {
         const int NB_FILES = 3;
         const int IMPL_PARAM = 4;
 
-        size_t max_open_file(0);
+        size_t max_open_file(sysconf(_SC_OPEN_MAX));
         if (argc > NB_FILES) {
             max_open_file = atoi(argv[NB_FILES]);
         }
@@ -245,7 +245,7 @@ int main(int argc, char* argv[]) {
         const int LEN = 4;
         const int IMPL_PARAM = 5;
 
-        size_t max_open_file(0);
+        size_t max_open_file(sysconf(_SC_OPEN_MAX));
         if (argc > NB_FILES) {
             max_open_file = atoi(argv[NB_FILES]);
         }
