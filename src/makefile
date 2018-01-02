@@ -116,7 +116,12 @@ benchmark/$(ME)/config.txt: benchmark/${ME}
 	sudo ./benchmark-config.sh $@
 
 benchmark/$(ME)/streams: benchmark/${ME}/config.txt streams
-	./benchmark-streams.sh > $@
+	@echo
+	@echo "Will now try to performs the benchmarking the of streams"
+	@echo "This require super user permissions to clear the caches"
+	@echo "If it fails: try \`sudo ./benchmark-config.sh $@\` or manually write the \"$@\" file"
+	@echo
+	sudo ./benchmark-streams.sh $@
 
 # Clean
 clean:
