@@ -111,14 +111,12 @@ void benchmarkOutputStream(AbstractOutputstream ** osVector, size_t vectorSize, 
         sprintf(str, "%ld", i);
         os->create(strcat(DATA_FILENAME,str));
     }
-    std::cout << 1 << std::endl;
     for (size_t j = 0; j < filesSize; ++j) {
         for (size_t i = 0; i < vectorSize; ++i){
             AbstractOutputstream* os = osVector[i];
             os->write(rand32());
         }
     }
-    std::cout << 2 << std::endl;
     for (size_t i = 0; i < vectorSize; ++i){
         AbstractOutputstream* os = osVector[i];
         os->close();

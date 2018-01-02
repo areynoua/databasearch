@@ -1,5 +1,9 @@
 CXX = g++
 SHELL = bash
+TIME = /usr/bin/time
+# find it with
+# whereis -b time | cut -f 2 -d ' '
+ME = $(shell whoami)_$(shell uname -n)
 
 SRCS = $(wildcard *.cpp)
 DEPS = $(wildcard *.hpp)
@@ -9,6 +13,9 @@ CXXFLAGS = -std=c++11 -ggdb3 -Wpedantic -Wall -Wextra -Wconversion -Weffc++ -Wst
 all:
 	make test-streams
 	make test-merge
+	@echo "TESTS OK, run make clean to erase temporay files"
+	@echo
+	make benchmark-streams
 
 #
 # Binaries
@@ -49,13 +56,13 @@ include $(SRCS:.cpp=.d)
 # Perform tests
 #
 test-streams: tests/tests tests/testdata.bin tests/random.65536
-	tests/tests streams && rm -f tests/test*.data.out tests/test*.random.out tests/random.*
+	tests/tests streams
 	@echo
 	@echo $@ done
 	@echo
 
 test-merge: tests/tests tests/sorted.1 tests/sorted.2 tests/sorted.3 tests/merged.1 tests/merged.2 tests/merged.3
-	tests/tests merge && rm -f tests/sorted.* tests/merged.* tests/merge.*.out
+	tests/tests merge
 	@echo
 	@echo $@ done
 	@echo
@@ -91,6 +98,26 @@ tests/random.%:
 	@echo generate $@ with $(subst tests/random.,,$@) bytes of random data
 	@head --bytes=$(subst tests/random.,,$@) /dev/urandom > $@
 
+#
+# Perform benchmarks
+#
+benchmark-streams: benchmark/$(ME)/streams
+
+
+benchmark/$(ME):
+	mkdir -p $@
+
+benchmark/$(ME)/config.txt: benchmark/${ME}
+	@echo
+	@echo "Will now try to show some interesting characteristics of the hardware to $@"
+	@echo "This require super user permissions"
+	@echo "If it fails: try \`sudo ./benchmark-config.sh $@\` or manually write the \"$@\" file"
+	@echo
+	sudo ./benchmark-config.sh $@
+
+benchmark/$(ME)/streams: benchmark/${ME}/config.txt streams
+	./benchmark-streams.sh > $@
+
 # Clean
 clean:
 	rm -f ${OBJS}
@@ -99,12 +126,14 @@ cleanall: clean
 	rm -f *~ *.default
 	rm -f */*~ */*.default
 	rm -f *.d.*
+	rm -f tests/test*.data.out tests/test*.random.out tests/random.*
+	rm -f tests/sorted.* tests/merged.* tests/merge.*.out
 
 mrproper: clean cleanall
 	rm -f *.d
 	#rm `git ls-files -i --exclude-from=.gitignore`
 
-.PHONY: all clean cleanall mrproper test-merge test-streams
+.PHONY: all clean cleanall mrproper test-merge test-streams benchmark-streams
 
 
 ## compile streams
