@@ -7,6 +7,7 @@ CXXFLAGS = -std=c++11 -ggdb3 -Wpedantic -Wall -Wextra -Wconversion -Weffc++ -Wst
 
 all:
 	make test-streams
+	make test-merge
 
 #
 # Binaries
@@ -15,11 +16,11 @@ streams: main.cc ${OBJS}
 	@echo compile $@
 	$(CXX) ${CXXFLAGS} $^ -o $@
 
-tests/generate_testdata: tests/generate_testdata.cpp ${OBJS}
+tests/generate_testdata: tests/generate_testdata.cc ${OBJS}
 	@echo compile $@
 	$(CXX) ${CXXFLAGS} $^ -o $@
 
-tests/tests: tests/tests.cpp ${OBJS} tests/test_streams.cpp tests/run_all_stream_tests.cpp tests/testdata.hpp
+tests/tests: tests/tests.cc ${OBJS} tests/test_streams.cpp tests/run_all_*_tests.cpp tests/testdata.hpp
 	@echo compile $@
 	$(CXX) ${CXXFLAGS} $^ -o $@
 
@@ -47,48 +48,47 @@ include $(SRCS:.cpp=.d)
 # Perform tests
 #
 test-streams: tests/tests tests/testdata.bin tests/random.65536
-	tests/tests && rm -f tests/test*.data.out tests/test*.random.out
+	tests/tests streams && rm -f tests/test*.data.out tests/test*.random.out tests/random.*
+	@echo
+	@echo $@ done
+	@echo
 
+test-merge: tests/tests tests/sorted.1 tests/sorted.2 tests/sorted.3 tests/merged.1 tests/merged.2 tests/merged.3
+	tests/tests merge && rm -f tests/sorted.* tests/merged.* tests/merge.*.out
+	@echo
+	@echo $@ done
+	@echo
 
-# sorted.1 contains -2 4 7 7
-# sorted.2 contains -3 4 9 10
-# sorted.3 contains  3 3 4 5
-sorted.1:
-	env echo -ne '\xfe\xff\xff\xff\x04\x00\x00\x00\x07\x00\x00\x00\x07\x00\x00\x00' > ./sorted.1
+tests/sorted.1:
+	@echo generate $@ with -2 4 7 7
+	@env echo -ne '\xfe\xff\xff\xff\x04\x00\x00\x00\x07\x00\x00\x00\x07\x00\x00\x00' > tests/sorted.1
 
-sorted.2:
-	env echo -ne '\xfd\xff\xff\xff\x04\x00\x00\x00\x09\x00\x00\x00\x0A\x00\x00\x00' > ./sorted.2
+tests/sorted.2:
+	@echo generate $@ with -3 4 9 10
+	@env echo -ne '\xfd\xff\xff\xff\x04\x00\x00\x00\x09\x00\x00\x00\x0A\x00\x00\x00' > tests/sorted.2
 
-sorted.3:
-	env echo -ne '\x03\x00\x00\x00\x03\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00' > ./sorted.3
+tests/sorted.3:
+	@echo generate $@ with 3 3 4 5
+	@env echo -ne '\x03\x00\x00\x00\x03\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00' > tests/sorted.3
 
-sorted.123:
-	env echo -ne '\xfd\xff\xff\xff\xfe\xff\xff\xff\x03\x00\x00\x00\x03\x00\x00\x00' > ./sorted.123
-	env echo -ne '\x04\x00\x00\x00\x04\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00' >>./sorted.123
-	env echo -ne '\x07\x00\x00\x00\x07\x00\x00\x00\x09\x00\x00\x00\x0a\x00\x00\x00' >>./sorted.123
+tests/merged.1:
+	@echo generate $@ with -2 4 7 7
+	@env echo -ne '\xfe\xff\xff\xff\x04\x00\x00\x00\x07\x00\x00\x00\x07\x00\x00\x00' > tests/merged.1
 
-test-merge: streams sorted.1 sorted.2 sorted.3 sorted.123
-	./streams merge 1
-	@diff -q sorted.1 merge.out
-	./streams merge 3
-	@diff -q sorted.123 merge.out
-	rm merge.out
+tests/merged.2:
+	@echo generate $@ with -3 -2 4 4 7 7 9 10
+	@env echo -ne '\xfd\xff\xff\xff\xfe\xff\xff\xff\x04\x00\x00\x00\x04\x00\x00\x00' > tests/merged.2
+	@env echo -ne '\x07\x00\x00\x00\x07\x00\x00\x00\x09\x00\x00\x00\x0a\x00\x00\x00' >>tests/merged.2
 
-tests/random.4:
-	head --bytes=4 /dev/urandom > tests/random.4
+tests/merged.3:
+	@echo generate $@ with -3 -2 3 3 4 4 4 5 7 7 9 10
+	@env echo -ne '\xfd\xff\xff\xff\xfe\xff\xff\xff\x03\x00\x00\x00\x03\x00\x00\x00' > tests/merged.3
+	@env echo -ne '\x04\x00\x00\x00\x04\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00' >>tests/merged.3
+	@env echo -ne '\x07\x00\x00\x00\x07\x00\x00\x00\x09\x00\x00\x00\x0a\x00\x00\x00' >>tests/merged.3
 
-tests/random.16:
-	head --bytes=16 /dev/urandom > tests/random.16
-
-tests/random.256:
-	head --bytes=256 /dev/urandom > tests/random.256
-
-tests/random.65536:
-	head --bytes=65536 /dev/urandom > tests/random.65536
-
-tests/random.4294967296:
-	head --bytes=4294967296 /dev/urandom > tests/random.4294967296
-
+tests/random.%:
+	@echo generate $@ with $(subst tests/random.,,$@) bytes of random data
+	@head --bytes=$(subst tests/random.,,$@) /dev/urandom > $@
 
 # Clean
 clean:
@@ -103,7 +103,7 @@ mrproper: clean cleanall
 	rm -f *.d
 	#rm `git ls-files -i --exclude-from=.gitignore`
 
-.PHONY: random test clean cleanall test-merge test-streams
+.PHONY: all clean cleanall mrproper test-merge test-streams
 
 
 ## compile streams

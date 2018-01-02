@@ -17,24 +17,7 @@
 #include "OutputStream3.hpp"
 #include "InputStream4.hpp"
 #include "OutputStream4.hpp"
-#include "merge.hpp"
 #include "streamTest.hpp"
-
-
-/** TODO */
-void testMerge(size_t isc, AbstractInputstream * isv[], AbstractOutputstream & os) {
-    char in_filename[9];
-    for (size_t i = 0; i < isc; ++i) {
-        snprintf(in_filename, 9, "sorted.%lu", i+1);
-        isv[i]->open(in_filename);
-    }
-    os.create("merge.out");
-    merge(isc, isv, os);
-    for (size_t i = 0; i < isc; ++i) {
-        isv[i]->close();
-    }
-    os.close();
-}
 
 int main(int argc, char* argv[]) {
     static_assert(__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__, "Bad endian");
@@ -42,27 +25,6 @@ int main(int argc, char* argv[]) {
     if (argc < 2) {
         std::cerr << "Need argument" << std::endl;
         exit(EXIT_FAILURE);
-    }
-    else if (strcmp(argv[1], "merge") == 0) {
-        if (argc < 3) {
-            std::cerr << "How many streams ?" << std::endl;
-            exit(EXIT_FAILURE);
-        }
-        size_t isc(strtol(argv[2], nullptr, 10)); // Number of streams
-        if (!(0 < isc && isc <= 3)) {
-            std::cerr << "Only 1 to 3 streams supported to test for now (due to 3 sorted.x files only)" << std::endl;
-            exit(EXIT_FAILURE);
-        }
-        AbstractInputstream ** isv = new AbstractInputstream*[isc];
-        for (size_t i = 0; i < isc; ++i) {
-            isv[i] = new InputStream1();
-        }
-        OutputStream1 os;
-        testMerge(isc, isv, os);
-
-        for (size_t i = 0; i < isc; ++i) {
-            delete isv[i];
-        }
     }
     // generate [nbFiles] [minQuantity] [maxQuantity]
     else if (strcmp(argv[1], "generate") == 0) {

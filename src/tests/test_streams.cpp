@@ -15,7 +15,7 @@
  * 1. Use `os` to write a file identical to the 'testdata.bin' file (from content hard-coded in testdata.hpp)
  * 2. Use `is` to read the 'testdata.bin' file (and check with the hard-coded content)
  * 3. Use `is` to read the data written by `os` (and check with the hard-coded content)
- * 4. Use `os` and `is` to create a copy of "random.65536" (does NOT check)
+ * 4. Use `os` and `is` to create a copy of "tests/random.65536" (does NOT check)
  *
  * The written files are named "tests/" + `desc` + ".data.out" and "tests/" + `desc` + "random.out"
  *
@@ -41,7 +41,8 @@ bool testStreams(AbstractOutputstream & os, AbstractInputstream & is, const char
     char * out_filename = new char[41];
     snprintf(out_filename, 40, "tests/%s.data.out", shortDesc);
 
-    if (!check) std::cout << "BEGIN: Output " << desc << " to   " << out_filename << "." << std::endl;
+    if (!check)
+        std::cout << "BEGIN: Output " << desc << " to   " << out_filename << "." << std::endl;
 
     os.create(out_filename);
     for (size_t i = 0; i < TESTDATA_SIZE; ++i) {
@@ -67,7 +68,8 @@ bool testStreams(AbstractOutputstream & os, AbstractInputstream & is, const char
     for (size_t f = 0; f < IN_FILES; ++f) {
         bool ok(true);
         const char * const in_filename = IN_FILENAMES[f];
-        if (!check) std::cout << "BEGIN: Input  " << desc << " from " << in_filename << "." << std::endl;
+        if (!check)
+            std::cout << "BEGIN: Input  " << desc << " from " << in_filename << "." << std::endl;
 
         is.open(in_filename);
         size_t i = 0;
@@ -112,21 +114,22 @@ bool testStreams(AbstractOutputstream & os, AbstractInputstream & is, const char
     // 4
     snprintf(out_filename, 40, "tests/%s.random.out", shortDesc);
 
-    if (!check) std::cout << "BEGIN: Input/output " << desc << " from random.65536 to " << out_filename << "." << std::endl;
-    is.open("random.65536");
+    if (!check)
+        std::cout << "BEGIN: Input/output " << desc << " from tests/random.65536 to " << out_filename << "." << std::endl;
+    is.open("tests/random.65536");
     os.create(out_filename);
     while (! is.end_of_stream()) {
         os.write(is.read_next());
     }
     os.close();
     is.close();
-    if (!check) std::cout << "END  : Input/output " << desc << " from random.65536 to " << out_filename << "." << std::endl;
+    if (!check) std::cout << "END  : Input/output " << desc << " from tests/random.65536 to " << out_filename << "." << std::endl;
     else {
         char * command = new char[91];
-        snprintf(command, 90, "diff -q %s %s", "random.65536", out_filename);
+        snprintf(command, 90, "diff -q %s %s", "tests/random.65536", out_filename);
         int result(std::system(command));
         if (result != 0) {
-            std::cout << "It seems that the test " << desc << " failed to write " << out_filename << " identical to random.65536." << std::endl;
+            std::cout << "It seems that the test " << desc << " failed to write " << out_filename << " identical to tests/random.65536." << std::endl;
             passed = false;
         }
     }
