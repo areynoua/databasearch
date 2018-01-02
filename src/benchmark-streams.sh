@@ -2,6 +2,11 @@
 
 alias time=/usr/bin/time
 
+if [[ $EUID -ne 0 ]]; then
+	echo "This script should be run as root to enable cache clearing" 1>&2
+	echo
+fi
+
 format="%C\n%U,%S,%R,%F,%w,%I,%O";
 
 filen=$(getconf OPEN_MAX);
@@ -26,6 +31,11 @@ echo
 echo Output
 echo
 
+if [[ $EUID -eq 0 ]]; then
+	sync
+	echo 3 > /proc/sys/vm/drop_caches
+fi
+
 date --rfc-3339=seconds >> "$1"
 
 for impln in 1 2; do
@@ -35,6 +45,10 @@ for impln in 1 2; do
 	for fn in $(seq 2 4 $filen); do
 		if !  /usr/bin/time -a -o "$1" -f "$format" ./streams output $impln $fn $len ; then
 			exit 1 ;
+		fi
+		if [[ $EUID -eq 0 ]]; then
+			sync
+			echo 3 > /proc/sys/vm/drop_caches
 		fi
 	done
 done
@@ -48,10 +62,16 @@ for impln in 3 4; do
 			if !  /usr/bin/time -a -o "$1" -f "$format" ./streams output $impln $fn $len $param ; then
 				exit 1 ;
 			fi
+			if [[ $EUID -eq 0 ]]; then
+				sync
+				echo 3 > /proc/sys/vm/drop_caches
+			fi
 		done
 	done
 done
 
+sync
+echo 3 > /proc/sys/vm/drop_caches
 
 echo
 echo Input
