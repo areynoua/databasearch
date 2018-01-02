@@ -11,7 +11,7 @@ InputStream2::~InputStream2() {
 void InputStream2::open(const char* const filename) {
     file_pointer = fopen(filename, "r");
     if (file_pointer == nullptr) {
-        throw FileOpenException(errno);
+        throw FileOpenException(errno, filename);
     }
     // fill read_value
     read_next();

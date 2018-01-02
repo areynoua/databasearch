@@ -12,7 +12,7 @@ void OutputStream2::create(const char* const filename) {
     close();
     file_pointer = fopen(filename, "w");
     if (file_pointer == nullptr) {
-        throw FileOpenException(errno);
+        throw FileOpenException(errno, filename);
     }
 }
 
