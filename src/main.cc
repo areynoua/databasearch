@@ -219,86 +219,60 @@ int main(int argc, char* argv[]) {
 
         delete[] isVector;
     }
-    // output [1-4 ][nbFiles] [minQuantity] [maxQuantity]
+
+    // output <impl> [ <nbFiles> [ <len> [ <impl-param> ] ] ]
+    // <impl>: 1 | 2 | 3 | 4
+    // <nbFile>: number. Defaults to max supported or 30 if 30 is smaller.
+    // <len>: size of the written files, in number of int32. Defaults to 134217728 (produces files of 512 mebibytes).
+    // <impl-param>: the size of the impl3 buffer or the number of pages mapped by impl4.
+    //      must be a power of 2 (implementation is generic, but as the instanciation is static
+    //      we restricted the possible values).
+    //
+    // with impl = 1 or impl = 2, impl-param is ignored
+    // if impl = 3 or impl = 4, impl-param is required (and so is nbFiles)
+    // ex:
+    //  output 1
+    //  output 1 0 134217728
+    //  output 1 max
+    //      write simultaneously 134217728 int32 numbers into the maximum number of file supported with impl 1 (512 mebibytes each)
+    //  output 2 3 268435456
+    //      write simultaneously 268435456 int32 numbers into 3 files with impl 2 (produces 3 files of 1 gibibyte each)
+    //  output 3 - - 256
+    //      write simultaneously 134217728 int32 numbers into the maximum number of file supported with impl 3 with a buffer of 256 int32
     else if (strcmp(argv[1],"output") == 0){
-        long max_open_file;
-        if (strcmp(argv[3],"max") == 0){
-            max_open_file = sysconf(_SC_OPEN_MAX);
+        const int IMPL = 2;
+        const int NB_FILES = 3;
+        const int LEN = 4;
+        const int IMPL_PARAM = 5;
+
+        size_t max_open_file(0);
+        if (argc > NB_FILES) {
+            max_open_file = atoi(argv[NB_FILES]);
         }
-        else{
-            max_open_file = atoi(argv[3]);
-        }
-        vector<AbstractOutputstream*> osVector;
-        if (strcmp(argv[2], "1") == 0){
-            for (int i = 0; i < max_open_file; ++i){
-                OutputStream1* os = new OutputStream1();
-                osVector.push_back(os);
-            }
-        }
-        if (strcmp(argv[2], "2") == 0){
-            for (int i = 0; i < max_open_file; ++i){
-                OutputStream2* os = new OutputStream2();
-                osVector.push_back(os);
-            }
+        if (max_open_file < 1 || 30 < max_open_file) {
+            max_open_file = 30;
         }
 
-        else if (strcmp(argv[2], "3") == 0){
-            size_t bufferSize = atoi(argv[6]);
-            for (int i = 0; i < max_open_file; ++i){
-                if (bufferSize == 2) {
-                    OutputStream3<2>* os = new OutputStream3<2>();
-                    osVector.push_back(os);
-                }
-                else if (bufferSize == 4) {
-                    OutputStream3<4>* os = new OutputStream3<4>();
-                    osVector.push_back(os);
-                }
-                else if (bufferSize == 8) {
-                    OutputStream3<8>* os = new OutputStream3<8>();
-                    osVector.push_back(os);
-                }
-                else if (bufferSize == 16) {
-                    OutputStream3<16>* os = new OutputStream3<16>();
-                    osVector.push_back(os);
-                }
-                else if (bufferSize == 32) {
-                    OutputStream3<32>* os = new OutputStream3<32>();
-                    osVector.push_back(os);
-                }
-                else if (bufferSize == 256) {
-                    OutputStream3<256>* os = new OutputStream3<256>();
-                    osVector.push_back(os);
-                }
-                else if (bufferSize == 512) {
-                    OutputStream3<512>* os = new OutputStream3<512>();
-                    osVector.push_back(os);
-                }
-                else if (bufferSize == 1024) {
-                    OutputStream3<1024>* os = new OutputStream3<1024>();
-                    osVector.push_back(os);
-                }
-                else if (bufferSize == 2048) {
-                    OutputStream3<2048>* os = new OutputStream3<2048>();
-                    osVector.push_back(os);
-                }
-                else if (bufferSize == 4096) {
-                    OutputStream3<4096>* os = new OutputStream3<4096>();
-                    osVector.push_back(os);
-                }
-                else {
-                    cout << "choose 2, 4, 8, 16, 256, 512, 1024, 2048 or 4096" << endl;
-                }
-            }
+        size_t len(0);
+        if (argc > LEN) {
+            len = atoi(argv[LEN]);
+        }
+        if (len < 1) {
+            len = 134217728;
         }
 
-        /*if (strcmp(argv[2], "4") == 0){
-            for (int i = 0; i < max_open_file; ++i){
-                OutputStream4* os = new OutputStream4(atoi(argv[6]));
-                osVector.push_back(os);
-            }
-        }*/
+        char * impl_param = new char[10];
+        impl_param[0] = '\x0';
+        if (argc > IMPL_PARAM) {
+            impl_param = argv[IMPL_PARAM];
+        }
 
-        benchmarkOutputStream(osVector,atoi(argv[4]),atoi(argv[5]));
+
+        AbstractOutputstream ** osVector;
+        osVector = OutputStreamFactory(argv[IMPL], impl_param, max_open_file);
+        benchmarkOutputStream(osVector, max_open_file, len);
+
+        delete[] osVector;
     }
 
     return EXIT_SUCCESS;
