@@ -76,7 +76,7 @@ void benchmarkInputStream(AbstractInputstream ** isVector, size_t vectorSize){
     // We open our K stream based on the quantity of inputstreams
     for (size_t i = 0; i < vectorSize; ++i){
         AbstractInputstream* is = isVector[i];
-        char DATA_FILENAME[]{"data files/data."};
+        char DATA_FILENAME[]{"output data/od."};
         char str[10];
         sprintf(str, "%ld", i);
         is->open(strcat(DATA_FILENAME,str));
