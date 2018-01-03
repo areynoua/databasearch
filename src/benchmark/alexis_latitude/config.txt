@@ -1,0 +1,127 @@
+Result of timings on disk sda
+ Timing buffered disk reads: 270 MB in  3.00 seconds =  89.99 MB/sec
+ Timing cached reads:   4704 MB in  2.00 seconds = 2352.36 MB/sec
+
+CPUs
+Architecture:          x86_64
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                4
+On-line CPU(s) list:   0-3
+Thread(s) per core:    2
+Core(s) per socket:    2
+Socket(s):             1
+NUMA node(s):          1
+Vendor ID:             GenuineIntel
+CPU family:            6
+Model:                 37
+Model name:            Intel(R) Core(TM) i5 CPU       M 540  @ 2.53GHz
+Stepping:              2
+CPU MHz:               1199.000
+CPU max MHz:           2534,0000
+CPU min MHz:           1199,0000
+BogoMIPS:              5054.39
+Virtualization:        VT-x
+L1d cache:             32K
+L1i cache:             32K
+L2 cache:              256K
+L3 cache:              3072K
+NUMA node0 CPU(s):     0-3
+
+disk sda
+
+/dev/sda:
+
+ATA device, with non-removable media
+	Model Number:       ST9500420ASG                            
+	Serial Number:      5VJ4FX52
+	Firmware Revision:  0004SDM1
+	Transport:          Serial
+Standards:
+	Used: unknown (minor revision code 0x0029) 
+	Supported: 8 7 6 5 
+	Likely used: 8
+Configuration:
+	Logical		max	current
+	cylinders	16383	16383
+	heads		16	16
+	sectors/track	63	63
+	--
+	CHS current addressable sectors:   16514064
+	LBA    user addressable sectors:  268435455
+	LBA48  user addressable sectors:  976773168
+	Logical/Physical Sector size:           512 bytes
+	device size with M = 1024*1024:      476940 MBytes
+	device size with M = 1000*1000:      500107 MBytes (500 GB)
+	cache/buffer size  = 16384 KBytes
+	Nominal Media Rotation Rate: 7200
+Capabilities:
+	LBA, IORDY(can be disabled)
+	Queue depth: 32
+	Standby timer values: spec'd by Standard, no device specific minimum
+	R/W multiple sector transfer: Max = 16	Current = 16
+	Advanced power management level: 254
+	Recommended acoustic management value: 208, current value: 208
+	DMA: mdma0 mdma1 mdma2 udma0 udma1 udma2 udma3 udma4 udma5 *udma6 
+	     Cycle time: min=120ns recommended=120ns
+	PIO: pio0 pio1 pio2 pio3 pio4 
+	     Cycle time: no flow control=120ns  IORDY flow control=120ns
+Commands/features:
+	Enabled	Supported:
+	   *	SMART feature set
+	    	Security Mode feature set
+	   *	Power Management feature set
+	   *	Write cache
+	   *	Look-ahead
+	   *	Host Protected Area feature set
+	   *	WRITE_BUFFER command
+	   *	READ_BUFFER command
+	   *	NOP cmd
+	   *	DOWNLOAD_MICROCODE
+	   *	Advanced Power Management feature set
+	    	SET_MAX security extension
+	   *	Automatic Acoustic Management feature set
+	   *	48-bit Address feature set
+	   *	Device Configuration Overlay feature set
+	   *	Mandatory FLUSH_CACHE
+	   *	FLUSH_CACHE_EXT
+	   *	SMART error logging
+	   *	SMART self-test
+	   *	General Purpose Logging feature set
+	   *	WRITE_{DMA|MULTIPLE}_FUA_EXT
+	   *	WRITE_DMA_QUEUED_FUA_EXT
+	   *	64-bit World wide name
+	   *	IDLE_IMMEDIATE with UNLOAD
+	    	Write-Read-Verify feature set
+	   *	WRITE_UNCORRECTABLE_EXT command
+	   *	{READ,WRITE}_DMA_EXT_GPL commands
+	   *	Segmented DOWNLOAD_MICROCODE
+	   *	Free-fall Control feature set
+	   *	Gen1 signaling speed (1.5Gb/s)
+	   *	Gen2 signaling speed (3.0Gb/s)
+	   *	Native Command Queueing (NCQ)
+	   *	Host-initiated interface power management
+	   *	Phy event counters
+	    	Device-initiated interface power management
+	   *	Software settings preservation
+	   *	SMART Command Transport (SCT) feature set
+	   *	SCT Read/Write Long (AC1), obsolete
+	   *	SCT Write Same (AC2)
+	   *	SCT Error Recovery Control (AC3)
+	   *	SCT Features Control (AC4)
+	   *	SCT Data Tables (AC5)
+	    	unknown 206[12] (vendor specific)
+Security: 
+	Master password revision code = 65534
+		supported
+	not	enabled
+	not	locked
+	not	frozen
+	not	expired: security count
+		supported: enhanced erase
+	104min for SECURITY ERASE UNIT. 104min for ENHANCED SECURITY ERASE UNIT. 
+Logical Unit WWN Device Identifier: 5000c50021c29dd5
+	NAA		: 5
+	IEEE OUI	: 000c50
+	Unique ID	: 021c29dd5
+Checksum: correct
