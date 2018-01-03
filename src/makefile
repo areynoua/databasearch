@@ -101,7 +101,7 @@ tests/random.%:
 #
 # Perform benchmarks
 #
-benchmark-streams: benchmark/$(ME)/streams
+benchmark-streams: benchmark/$(ME)/streams.csv
 
 
 benchmark/$(ME):
@@ -115,7 +115,7 @@ benchmark/$(ME)/config.txt: benchmark/${ME}
 	@echo
 	sudo ./benchmark-config.sh $@
 
-benchmark/$(ME)/streams: benchmark/${ME}/config.txt streams
+benchmark/$(ME)/streams.csv: benchmark/${ME}/config.txt streams
 	@echo
 	@echo "Will now try to performs the benchmarking the of streams"
 	@echo "This require super user permissions to clear the caches"
