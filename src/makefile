@@ -28,7 +28,7 @@ tests/generate_testdata: tests/generate_testdata.cc ${OBJS}
 	@echo compile $@
 	$(CXX) ${CXXFLAGS} $^ -o $@
 
-tests/tests: tests/tests.cc ${OBJS} tests/test_streams.cpp tests/run_all_*_tests.cpp tests/run_all_stream_tests.hpp tests/testdata.hpp
+tests/tests: tests/tests.cc ${OBJS} tests/test_streams.cpp tests/run_all_stream_tests.cpp tests/run_all_stream_tests.hpp tests/run_all_merge_tests.cpp tests/run_all_merge_tests.hpp tests/testdata.hpp
 	@echo compile $@
 	$(CXX) ${CXXFLAGS} $^ -o $@
 
