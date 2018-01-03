@@ -53,7 +53,8 @@ AbstractInputstream ** InputStreamFactory(char * type, char * parameter, size_t 
                 streamarg(InputStream3,16384);
                 streamarg(InputStream3,32768);
                 default:
-                    std::cout << "Choose 2, 4, 8, 16, 256, 512, 1024, 2048, 4096, 8192, 16384 or 32768 as buffer size" << endl;
+                    std::cout << parameter << " is not a valid parameter for input stream 3" << std::endl;
+                    std::cout << "Choose 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384 or 32768 as buffer size" << endl;
                     exit(EXIT_FAILURE);
             }
             break;
@@ -76,7 +77,8 @@ AbstractInputstream ** InputStreamFactory(char * type, char * parameter, size_t 
                 streamarg(InputStream4,16384);
                 streamarg(InputStream4,32768);
                 default:
-                    std::cout << "Choose 1, 2, 4, 8, 16, 256, 512, 1024, 2048, 4096, 8192, 16384 or 32768 as number of page to map\n"
+                    std::cout << parameter << " is not a valid parameter for input stream 4" << std::endl;
+                    std::cout << "Choose 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384 or 32768 as number of page to map\n"
                         << "The page size is (bytes)" << sysconf(_SC_PAGESIZE) << std::endl;
                     exit(EXIT_FAILURE);
             }
@@ -124,7 +126,8 @@ AbstractOutputstream ** OutputStreamFactory(char * type, char * parameter, size_
                 streamarg(OutputStream3,16384);
                 streamarg(OutputStream3,32768);
                 default:
-                    std::cout << "Choose 2, 4, 8, 16, 256, 512, 1024, 2048, 4096, 8192, 16384 or 32768 as buffer size" << endl;
+                    std::cout << parameter << " is not a valid parameter for output stream 3" << std::endl;
+                    std::cout << "Choose 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384 or 32768 as buffer size" << endl;
                     exit(EXIT_FAILURE);
             }
             break;
@@ -147,7 +150,8 @@ AbstractOutputstream ** OutputStreamFactory(char * type, char * parameter, size_
                 streamarg(OutputStream4,16384);
                 streamarg(OutputStream4,32768);
                 default:
-                    std::cout << "Choose 1, 2, 4, 8, 16, 256, 512, 1024, 2048, 4096, 8192, 16384 or 32768 as number of page to map\n"
+                    std::cout << parameter << " is not a valid parameter for output stream 4" << std::endl;
+                    std::cout << "Choose 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384 or 32768 as number of page to map\n"
                         << "The page size is (bytes)" << sysconf(_SC_PAGESIZE) << std::endl;
                     exit(EXIT_FAILURE);
             }

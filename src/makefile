@@ -13,6 +13,7 @@ CXXFLAGS = -std=c++11 -ggdb3 -Wpedantic -Wall -Wextra -Wconversion -Weffc++ -Wst
 all:
 	make test-streams
 	make test-merge
+	make test-merge-sort
 	@echo "TESTS OK, run make clean to erase temporay files"
 	@echo
 	make benchmark-streams
@@ -20,7 +21,11 @@ all:
 #
 # Binaries
 #
-streams: main.cc ${OBJS}
+streams: streams.cc ${OBJS}
+	@echo compile $@
+	$(CXX) ${CXXFLAGS} $^ -o $@
+
+mergesort: mergesort.cc ${OBJS}
 	@echo compile $@
 	$(CXX) ${CXXFLAGS} $^ -o $@
 
@@ -67,6 +72,12 @@ test-merge: tests/tests tests/sorted.1 tests/sorted.2 tests/sorted.3 tests/merge
 	@echo $@ done
 	@echo
 
+test-merge-sort: mergesort tests/data.123 tests/merged.3
+	./mergesort tests/data.123 2 5
+	@echo
+	@echo $@ done
+	@echo
+
 tests/sorted.1:
 	@echo generate $@ with -2 4 7 7
 	@env echo -ne '\xfe\xff\xff\xff\x04\x00\x00\x00\x07\x00\x00\x00\x07\x00\x00\x00' > tests/sorted.1
@@ -78,6 +89,12 @@ tests/sorted.2:
 tests/sorted.3:
 	@echo generate $@ with 3 3 4 5
 	@env echo -ne '\x03\x00\x00\x00\x03\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00' > tests/sorted.3
+
+tests/data.123:
+	@echo generate $@ with 7 -2 4 7 10 4 -3 9 5 4 3 3
+	@env echo -ne '\x07\x00\x00\x00\xfe\xff\xff\xff\x04\x00\x00\x00\x07\x00\x00\x00' > tests/data.123
+	@env echo -ne '\x0A\x00\x00\x00\x04\x00\x00\x00\xfd\xff\xff\xff\x09\x00\x00\x00' >>tests/data.123
+	@env echo -ne '\x05\x00\x00\x00\x04\x00\x00\x00\x03\x00\x00\x00\x03\x00\x00\x00' >>tests/data.123
 
 tests/merged.1:
 	@echo generate $@ with -2 4 7 7

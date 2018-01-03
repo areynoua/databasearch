@@ -13,7 +13,7 @@ if [[ $EUID -ne 0 ]]; then
 	echo
 fi
 
-actions="input output"
+actions="output input"
 # If 1 is too slow on your computer you can remove it below or
 # descrease the size of files of this impl in file_len()
 impls="1 2 3 4"
@@ -57,6 +57,7 @@ fi
 clear_cache
 date --rfc-3339=seconds >> "$1"
 
+
 for impl in $impls; do
 	for action in $actions; do
 		echo $action;
@@ -71,7 +72,7 @@ for impl in $impls; do
 						fi
 					else
 						clear_cache
-						if !  /usr/bin/time -a -o "$1" -f "$format" ./streams output $impl $file_count $param ; then
+						if !  /usr/bin/time -a -o "$1" -f "$format" ./streams input $impl $file_count $param ; then
 							exit 1 ;
 						fi
 					fi
