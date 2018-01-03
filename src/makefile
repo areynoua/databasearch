@@ -73,7 +73,8 @@ test-merge: tests/tests tests/sorted.1 tests/sorted.2 tests/sorted.3 tests/merge
 	@echo
 
 test-merge-sort: mergesort tests/data.123 tests/merged.3
-	./mergesort tests/data.123 2 5
+	./mergesort tests/data.123 2 5 | cut -d ' ' -f 4 > /tmp/outfilename
+	diff tests/merged.3 $(shell cat /tmp/outfilename)
 	@echo
 	@echo $@ done
 	@echo
@@ -120,7 +121,6 @@ tests/random.%:
 #
 benchmark-streams: benchmark/$(ME)/streams.csv
 
-
 benchmark/$(ME):
 	mkdir -p $@
 
@@ -149,7 +149,7 @@ cleanall: clean
 	rm -f */*~ */*.default
 	rm -f *.d.*
 	rm -f tests/test*.data.out tests/test*.random.out tests/random.*
-	rm -f tests/sorted.* tests/merged.* tests/merge.*.out
+	rm -f tests/sorted.* tests/merged.* tests/merge.*.out tests/data.*
 
 mrproper: clean cleanall
 	rm -f *.d

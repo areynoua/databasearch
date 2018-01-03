@@ -12,7 +12,6 @@ void merge(size_t isc, AbstractInputstream * const isv[], AbstractOutputstream &
 template<typename OS, typename IS>
 char * dway_merge_sort(IS & input, size_t memory /* M */, size_t streamsc /* d */) {
     // 1. Read the input file and split it into ceil(N/M) streams, each of size at most M.
-  std::cout << 1 << std::endl;
 
     char * filename_template = new char[40];
     snprintf(filename_template, 39, "%s/%s", P_tmpdir, "dway_merge.%ld.tmp");
@@ -70,6 +69,7 @@ char * dway_merge_sort(IS & input, size_t memory /* M */, size_t streamsc /* d *
         ++next_file;
 
         merge(isc, inputs, output);
+        output.close();
 
         for (size_t i = 0; i < isc; ++i) {
             inputs[i]->close();
