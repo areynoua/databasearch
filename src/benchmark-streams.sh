@@ -49,31 +49,31 @@ echo
 
 date --rfc-3339=seconds >> "$1"
 
-#for impln in 1 2; do
-#	len=$(filelen $impln)
-#	echo ;
-#	echo Implementation $impln;
-#	for fn in $(seq 2 6 $filen); do
-#		echo "$fn files"
-#		if !  /usr/bin/time -a -o "$1" -f "$format" ./streams output $impln $fn $len ; then
-#			exit 1 ;
-#		fi
-#	done
-#done
-#
-#for impln in 3 4; do
-#	len=$(filelen $impln)
-#	echo ;
-#	echo Implementation $impln;
-#	for param in $(params $impln) ; do
-#		for fn in $(seq 2 6 $filen); do
-#			echo "$fn files"
-#			if !  /usr/bin/time -a -o "$1" -f "$format" ./streams output $impln $fn $len $param ; then
-#				exit 1 ;
-#			fi
-#		done
-#	done
-#done
+for impln in 1 2; do
+	len=$(filelen $impln)
+	echo ;
+	echo Implementation $impln;
+	for fn in $(seq 2 6 $filen); do
+		echo "$fn files"
+		if !  /usr/bin/time -a -o "$1" -f "$format" ./streams output $impln $fn $len ; then
+			exit 1 ;
+		fi
+	done
+done
+
+for impln in 3 4; do
+	len=$(filelen $impln)
+	echo ;
+	echo Implementation $impln;
+	for param in $(params $impln) ; do
+		for fn in $(seq 2 6 $filen); do
+			echo "$fn files"
+			if !  /usr/bin/time -a -o "$1" -f "$format" ./streams output $impln $fn $len $param ; then
+				exit 1 ;
+			fi
+		done
+	done
+done
 
 if [[ $EUID -eq 0 ]]; then
 	sync
