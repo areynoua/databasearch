@@ -57,7 +57,6 @@ fi
 clear_cache
 date --rfc-3339=seconds >> "$1"
 
-
 for impl in $impls; do
 	for action in $actions; do
 		echo $action;
