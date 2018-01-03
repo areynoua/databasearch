@@ -14,6 +14,8 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 actions="input output"
+# If 1 is too slow on your computer you can remove it below or
+# descrease the size of files of this impl in file_len()
 impls="1 2 3 4"
 
 format="\"%C\",%U,%S,%E,%R,%F,%w,%I,%O";
@@ -56,7 +58,6 @@ clear_cache
 date --rfc-3339=seconds >> "$1"
 
 for impl in $impls; do
-	echo "Implementation $impl";
 	for action in $actions; do
 		echo $action;
 		for param in $(params $impl); do

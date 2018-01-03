@@ -107,7 +107,7 @@ benchmark-streams: benchmark/$(ME)/streams.csv
 benchmark/$(ME):
 	mkdir -p $@
 
-benchmark/$(ME)/config.txt: benchmark/${ME}
+benchmark/$(ME)/config.txt: benchmark/${ME} benchmark-config.sh
 	@echo
 	@echo "Will now try to show some interesting characteristics of the hardware to $@"
 	@echo "This require super user permissions"
@@ -115,7 +115,7 @@ benchmark/$(ME)/config.txt: benchmark/${ME}
 	@echo
 	sudo ./benchmark-config.sh $@
 
-benchmark/$(ME)/streams.csv: benchmark/${ME}/config.txt streams
+benchmark/$(ME)/streams.csv: benchmark/${ME}/config.txt streams benchmark-streams.sh
 	@echo
 	@echo "Will now try to performs the benchmarking the of streams"
 	@echo "This require super user permissions to clear the caches"
