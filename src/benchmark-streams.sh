@@ -14,6 +14,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 actions="output input"
+
 # If 1 is too slow on your computer you can remove it below or
 # descrease the size of files of this impl in file_len()
 impls="1 2 3 4"
@@ -25,7 +26,7 @@ if (( $max_open_files > 30 )) ; then
 	max_open_files=30;
 fi
 
-file_counts="1 2 5 15 30"
+file_counts="1 2 10 30"
 
 file_len() {
 	if [[ $1 == "1" ]]; then
@@ -37,10 +38,10 @@ file_len() {
 
 params() {
 	if [[ $1 == "3" ]]; then
-		echo "32 64 128 256 512 1024 4096 16384"
+		echo "44 64 88 128 180 256 360 512 724 1024 1448 2048 2896 4096 5792 8192 11584 16384 23168 32768"
 	else
 		if [[ $1 == "4" ]]; then
-			echo "1 4 16 64 256 1024 4096 8192"
+			echo "1 2 4 8 16 32 64 128 256 512 1024 2048"
 		else
 			echo "1"
 		fi
@@ -55,7 +56,7 @@ fi
 }
 
 clear_cache
-date --rfc-3339=seconds >> "$1"
+#date --rfc-3339=seconds >> "$1"
 
 for impl in $impls; do
 	for action in $actions; do
@@ -81,75 +82,3 @@ for impl in $impls; do
 	done
 done
 
-#
-#echo
-#echo Output
-#echo
-#
-#
-#for impln in 1 2; do
-#	len=$(file_len $impln)
-#	echo ;
-#	echo Implementation $impln;
-#	for fn in $(seq 2 6 $max_open_files); do
-#		echo "$fn files"
-#		if !  /usr/bin/time -a -o "$1" -f "$format" ./streams output $impln $fn $len ; then
-#			exit 1 ;
-#		fi
-#	done
-#done
-#
-#for impln in 3 4; do
-#	len=$(file_len $impln)
-#	echo ;
-#	echo Implementation $impln;
-#	for param in $(params $impln) ; do
-#		for fn in $(seq 2 6 $max_open_files); do
-#			echo "$fn files"
-#			if !  /usr/bin/time -a -o "$1" -f "$format" ./streams output $impln $fn $len $param ; then
-#				exit 1 ;
-#			fi
-#		done
-#	done
-#done
-#
-#if [[ $EUID -eq 0 ]]; then
-#	sync
-#	echo 3 > /proc/sys/vm/drop_caches
-#fi
-#
-#echo
-#echo Input
-#echo
-#
-#for impln in 1 2; do
-#	echo ;
-#	echo Implementation $impln;
-#	for fn in $(seq 2 6 $max_open_files); do
-#		echo "$fn files"
-#		if !  /usr/bin/time -a -o "$1" -f "$format" ./streams input $impln $fn ; then
-#			exit 1 ;
-#		fi
-#		if [[ $EUID -eq 0 ]]; then
-#			sync
-#			echo 3 > /proc/sys/vm/drop_caches
-#		fi
-#	done
-#done
-#
-#for impln in 3 4; do
-#	echo ;
-#	echo Implementation $impln;
-#	for param in $(params $impln) ; do
-#		for fn in $(seq 2 6 $max_open_files); do
-#			echo "$fn files"
-#			if !  /usr/bin/time -a -o "$1" -f "$format" ./streams input $impln $fn $param ; then
-#				exit 1 ;
-#			fi
-#			if [[ $EUID -eq 0 ]]; then
-#				sync
-#				echo 3 > /proc/sys/vm/drop_caches
-#			fi
-#		done
-#	done
-#done

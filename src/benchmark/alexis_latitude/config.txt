@@ -1,6 +1,6 @@
 Result of timings on disk sda
- Timing buffered disk reads: 286 MB in  3.00 seconds =  95.29 MB/sec
- Timing cached reads:   4734 MB in  2.00 seconds = 2366.91 MB/sec
+ Timing buffered disk reads: 304 MB in  3.02 seconds = 100.80 MB/sec
+ Timing cached reads:   5418 MB in  2.00 seconds = 2709.24 MB/sec
 
 CPUs
 Architecture:          x86_64
@@ -17,7 +17,7 @@ CPU family:            6
 Model:                 37
 Model name:            Intel(R) Core(TM) i5 CPU       M 540  @ 2.53GHz
 Stepping:              2
-CPU MHz:               1599.000
+CPU MHz:               1199.000
 CPU max MHz:           2534,0000
 CPU min MHz:           1199,0000
 BogoMIPS:              5054.39
