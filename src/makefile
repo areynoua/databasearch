@@ -8,7 +8,7 @@ ME = $(shell whoami)_$(shell uname -n)
 SRCS = $(wildcard *.cpp)
 DEPS = $(wildcard *.hpp)
 OBJS = $(subst .cpp,.o,${SRCS})
-CXXFLAGS = -std=c++11 -ggdb3 -Wpedantic -Wall -Wextra -Wconversion -Weffc++ -Wstrict-null-sentinel -Wold-style-cast -Wnoexcept -Wctor-dtor-privacy -Woverloaded-virtual -Wsign-promo -Wzero-as-null-pointer-constant
+CXXFLAGS = -std=c++11 -O1 -Wpedantic -Wall -Wextra -Wconversion -Weffc++ -Wstrict-null-sentinel -Wold-style-cast -Wnoexcept -Wctor-dtor-privacy -Woverloaded-virtual -Wsign-promo -Wzero-as-null-pointer-constant
 
 all:
 	make test-streams
@@ -17,6 +17,7 @@ all:
 	@echo "TESTS OK, run make clean to erase temporay files"
 	@echo
 	make benchmark-streams
+	make benchmark-mergesort
 
 #
 # Binaries
@@ -73,8 +74,7 @@ test-merge: tests/tests tests/sorted.1 tests/sorted.2 tests/sorted.3 tests/merge
 	@echo
 
 test-merge-sort: mergesort tests/data.123 tests/merged.3
-	./mergesort tests/data.123 2 5 | cut -d ' ' -f 4 > /tmp/outfilename
-	diff tests/merged.3 $(shell cat /tmp/outfilename)
+	./mergesort tests/data.123 2 5 | cut -d ' ' -f 4 > /tmp/outfilename && diff tests/merged.3 $(shell cat /tmp/outfilename)
 	@echo
 	@echo $@ done
 	@echo
@@ -121,10 +121,10 @@ tests/random.%:
 #
 benchmark-streams: benchmark/$(ME)/streams.csv
 
-benchmark/$(ME):
-	mkdir -p $@
+benchmark-mergesort: benchmark/$(ME)/mergesort.csv
 
-benchmark/$(ME)/config.txt: benchmark/${ME} benchmark-config.sh
+benchmark/$(ME)/config.txt: benchmark-config.sh
+	mkdir -p $@
 	@echo
 	@echo "Will now try to show some interesting characteristics of the hardware to $@"
 	@echo "This require super user permissions"
@@ -133,12 +133,10 @@ benchmark/$(ME)/config.txt: benchmark/${ME} benchmark-config.sh
 	sudo ./benchmark-config.sh $@
 
 benchmark/$(ME)/streams.csv: benchmark/${ME}/config.txt streams benchmark-streams.sh
-	@echo
-	@echo "Will now try to performs the benchmarking the of streams"
-	@echo "This require super user permissions to clear the caches"
-	@echo "If it fails: try \`sudo ./benchmark-config.sh $@\` or manually write the \"$@\" file"
-	@echo
-	sudo ./benchmark-streams.sh $@
+	sudo ./benchmark-streams.sh $@ || ./benchmark-streams.sh $@
+
+benchmark/$(ME)/mergesort.csv: benchmark/${ME}/config.txt mergesort benchmark-mergesort.sh "output data/od.0"
+	sudo ./benchmark-mergesort.sh $@ || ./benchmark-mergesort.sh $@
 
 # Clean
 clean:
@@ -155,7 +153,7 @@ mrproper: clean cleanall
 	rm -f *.d
 	#rm `git ls-files -i --exclude-from=.gitignore`
 
-.PHONY: all clean cleanall mrproper test-merge test-streams benchmark-streams
+.PHONY: all clean cleanall mrproper test-merge test-streams
 
 
 ## compile streams

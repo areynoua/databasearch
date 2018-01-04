@@ -5,7 +5,7 @@
 #include "common.hpp"
 #include "merge.hpp"
 
-typedef InputStream3<512> InputStream;
+typedef InputStream3<1024> InputStream;
 typedef OutputStream3<1024> OutputStream;
 
 int main(int argc, char ** argv) {
